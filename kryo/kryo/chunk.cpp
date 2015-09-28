@@ -6,6 +6,8 @@ KRYO_BEGIN_NAMESPACE
 Chunk::Chunk()
     : BlocArray3d(CHUNK_SIZE_WIDTH, CHUNK_SIZE_HEIGHT, CHUNK_SIZE_DEPTH) { }
 
+Chunk::~Chunk() { }
+
 // TODO: renommer afin d'uniformiser la nomenclature
 void Chunk::RemoveBloc(int x, int y, int z)
 {

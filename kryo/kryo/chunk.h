@@ -10,6 +10,7 @@ class Chunk : public BlocArray3d
 {
 public:
     Chunk();
+    ~Chunk();
     void RemoveBloc(int x, int y, int z);
     void SetBloc(int x, int y, int z, BlocType type);
     BlocType GetBloc(int x, int y, int z) const;
