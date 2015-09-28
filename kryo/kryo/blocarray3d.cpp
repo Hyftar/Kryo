@@ -44,14 +44,19 @@ BlocType BlocArray3d::Get(int idx) const
     return m_blocks[idx];
 }
 
-void BlocArray3d::Reset(BlocType type)
+int BlocArray3d::GetIndexAt(int x, int y, int z) const
 {
-    std::fill(m_blocks, m_blocks + KRYO_BLOCKARRAY3D_SIZE, type);
+    return KRYO_COORDINATES_IDX(x, y, z);
 }
 
 int BlocArray3d::GetBlockCount() const
 {
     return KRYO_BLOCKARRAY3D_SIZE;
+}
+
+void BlocArray3d::Reset(BlocType type)
+{
+    std::fill(m_blocks, m_blocks + KRYO_BLOCKARRAY3D_SIZE, type);
 }
 
 #undef KRYO_BLOCKARRAY3D_SIZE

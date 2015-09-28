@@ -17,6 +17,7 @@ public:
     void Set(int idx, BlocType type);
     BlocType Get(int x, int y, int z) const;
     BlocType Get(int idx) const;
+    int GetIndexAt(int x, int y, int z) const;
     int GetBlockCount() const;
     void Reset(BlocType type);
 private:
