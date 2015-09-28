@@ -3,6 +3,7 @@
 KRYO_BEGIN_NAMESPACE
 
 #define KRYO_BLOCKARRAY3D_SIZE (m_width * m_height * m_depth)
+#define KRYO_COORDINATES_IDX(x, y, z) (x + (z * m_width) + (y * m_depth * m_width))
 
 BlocArray3d::BlocArray3d(int width, int height, int depth)
     : m_width(width), m_height(height), m_depth(depth)
@@ -25,12 +26,22 @@ BlocArray3d::~BlocArray3d()
 
 void BlocArray3d::Set(int x, int y, int z, BlocType type)
 {
-    m_blocks[x + (y * m_width) + (z * m_width * m_depth)] = type;
+    m_blocks[KRYO_COORDINATES_IDX(x, y, z)] = type;
+}
+
+void BlocArray3d::Set(int idx, BlocType type)
+{
+    m_blocks[idx] = type;
 }
 
 BlocType BlocArray3d::Get(int x, int y, int z) const
 {
-    return m_blocks[x + (z * m_width) + (y * m_width * m_depth)];
+    return m_blocks[KRYO_COORDINATES_IDX(x, y, z)];
+}
+
+BlocType BlocArray3d::Get(int idx) const
+{
+    return m_blocks[idx];
 }
 
 void BlocArray3d::Reset(BlocType type)
@@ -44,5 +55,6 @@ int BlocArray3d::GetBlockCount() const
 }
 
 #undef KRYO_BLOCKARRAY3D_SIZE
+#undef KRYO_COORDINATES_IDX
 
 KRYO_END_NAMESPACE

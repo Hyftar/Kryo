@@ -14,7 +14,9 @@ public:
     BlocArray3d(const BlocArray3d &source);
     virtual ~BlocArray3d();
     void Set(int x, int y, int z, BlocType type);
+    void Set(int idx, BlocType type);
     BlocType Get(int x, int y, int z) const;
+    BlocType Get(int idx) const;
     int GetBlockCount() const;
     void Reset(BlocType type);
 private:
