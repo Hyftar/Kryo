@@ -1,4 +1,5 @@
 // TODO: renommer 'blocinfo' en 'blockinfo'
+// TODO: renommer 'SetDurabilite' et 'GetDurabilite' en 'SetDurability' et 'GetDurability, respectivement
 #ifndef KRYO_BLOCKINFO
 #define KRYO_BLOCKINFO
 

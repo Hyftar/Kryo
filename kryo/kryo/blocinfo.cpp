@@ -24,7 +24,7 @@ void BlocInfo::SetDurabilite(int durability)
 
 void BlocInfo::Afficher() const
 {
-    std::cout << "{ Type: \"" << m_type << "\", Name: \"" << m_name << "\", Durability: \"" << m_durability << "\" }";
+    std::cout << "{ Type: \"" << m_type << "\", Name: \"" << m_name << "\", Durability: \"" << m_durability << "\" }" << std::endl;
 }
 
 KRYO_END_NAMESPACE
