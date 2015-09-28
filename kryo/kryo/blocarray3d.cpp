@@ -43,4 +43,6 @@ int BlocArray3d::GetBlockCount() const
     return KRYO_BLOCKARRAY3D_SIZE;
 }
 
+#undef KRYO_BLOCKARRAY3D_SIZE
+
 KRYO_END_NAMESPACE
