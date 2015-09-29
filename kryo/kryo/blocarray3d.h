@@ -20,6 +20,10 @@ public:
     int GetIndexAt(int x, int y, int z) const;
     int GetBlockCount() const;
     void Reset(BlocType type);
+
+private:
+    void ValidateCoordinates(int x, int y, int z) const;
+
 private:
     int m_width;
     int m_height;
