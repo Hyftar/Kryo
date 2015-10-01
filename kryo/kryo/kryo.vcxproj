@@ -72,8 +72,8 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="blocarray3d.h" />
-    <ClInclude Include="blocinfo.h" />
+    <ClInclude Include="blockarray3d.h" />
+    <ClInclude Include="blockinfo.h" />
     <ClInclude Include="chunk.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="global.h" />
@@ -81,7 +81,7 @@
     <ClInclude Include="system.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="blocarray3d.cpp" />
+    <ClCompile Include="blockarray3d.cpp" />
     <ClCompile Include="blocinfo.cpp" />
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="main.cpp" />

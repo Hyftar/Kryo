@@ -1,4 +1,3 @@
-// TODO: renommer 'blocinfo' en 'blockinfo'
 // TODO: renommer 'SetDurabilite' et 'GetDurabilite' en 'SetDurability' et 'GetDurability, respectivement
 #ifndef KRYO_BLOCKINFO_H
 #define KRYO_BLOCKINFO_H
@@ -8,17 +7,18 @@
 
 KRYO_BEGIN_NAMESPACE
 
-class BlocInfo
+class BlockInfo
 {
 public:
-    BlocInfo(BlocType type, const std::string& name);
-    ~BlocInfo();
-    BlocType GetType() const;
+    BlockInfo(BlockType type, const std::string& name);
+    ~BlockInfo();
+    BlockType GetType() const;
     int GetDurabilite() const;
     void SetDurabilite(int durability);
     void Afficher() const;
+
 private:
-    BlocType m_type;
+    BlockType m_type;
     std::string m_name;
     int m_durability = 0;
 };

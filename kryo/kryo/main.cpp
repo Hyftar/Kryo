@@ -11,24 +11,24 @@ bool ChunkTest()
 
     // Get et Set d'un block
     testChunk->Set(0, 0, 0, BTYPE_GRASS);
-    if (testChunk->GetBloc(0, 0, 0) != BTYPE_GRASS)
+    if (testChunk->GetBlock(0, 0, 0) != BTYPE_GRASS)
         return false;
 
-    testChunk->SetBloc(15, 100, 12, BTYPE_DIRT);
-    if (testChunk->GetBloc(15, 100, 12) != BTYPE_DIRT)
+    testChunk->SetBlock(15, 100, 12, BTYPE_DIRT);
+    if (testChunk->GetBlock(15, 100, 12) != BTYPE_DIRT)
         return false;
 
     // Test de copie d'un chunk
     Kryo::Chunk* testCloneChunk = new Kryo::Chunk(*testChunk);
-    if (testCloneChunk->GetBloc(15, 100, 12) != BTYPE_DIRT)
+    if (testCloneChunk->GetBlock(15, 100, 12) != BTYPE_DIRT)
         return false;
 
-    testCloneChunk->RemoveBloc(15, 100, 12);
-    if (testChunk->GetBloc(15, 100, 12) == BTYPE_AIR || testCloneChunk->GetBloc(15, 100, 12) != BTYPE_AIR)
+    testCloneChunk->RemoveBlock(15, 100, 12);
+    if (testChunk->GetBlock(15, 100, 12) == BTYPE_AIR || testCloneChunk->GetBlock(15, 100, 12) != BTYPE_AIR)
         return false;
 
     testCloneChunk->Reset(BTYPE_GRASS);
-    if (testCloneChunk->GetBloc(8, 111, 12) != BTYPE_GRASS || testChunk->GetBloc(8, 111, 12) != BTYPE_AIR)
+    if (testCloneChunk->GetBlock(8, 111, 12) != BTYPE_GRASS || testChunk->GetBlock(8, 111, 12) != BTYPE_AIR)
         return false;
 
     testChunk->Set(10, 11, 5, BTYPE_GRASS);
@@ -40,7 +40,7 @@ bool ChunkTest()
 
 bool BlockTest()
 {
-    Kryo::BlocInfo* testBlock = new Kryo::BlocInfo(BTYPE_GRASS, "grass");
+    Kryo::BlockInfo* testBlock = new Kryo::BlockInfo(BTYPE_GRASS, "grass");
     testBlock->SetDurabilite(5);
     testBlock->Afficher();
     if (testBlock->GetDurabilite() != 5)

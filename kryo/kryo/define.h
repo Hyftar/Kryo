@@ -1,8 +1,7 @@
-// TODO: Renommer 'BlocType' en 'BlockType'
 #ifndef KRYO_DEFINE_H
 #define KRYO_DEFINE_H
 
-enum BlocType
+enum BlockType
 {
     BTYPE_AIR,
     BTYPE_DIRT,
