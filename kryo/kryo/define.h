@@ -8,13 +8,11 @@ enum BlockType
     BTYPE_GRASS
 };
 
-// Les macros ont été renommées dans l'optique d'améliorer la sémantique
-//#define CHUNK_SIZE_X 16
-//#define CHUNK_SIZE_Y 128
-//#define CHUNK_SIZE_Z 16
-
 #define CHUNK_SIZE_WIDTH 16
 #define CHUNK_SIZE_HEIGHT 128
 #define CHUNK_SIZE_DEPTH 16
+
+#define TEXTURE_PATH "../kryo/media/textures/"
+#define VIEW_DISTANCE 128
 
 #endif

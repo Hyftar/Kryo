@@ -87,15 +87,21 @@
     <ClInclude Include="blockinfo.h" />
     <ClInclude Include="chunk.h" />
     <ClInclude Include="define.h" />
+    <ClInclude Include="engine.h" />
+    <ClInclude Include="openglcontext.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="kryocore.h" />
     <ClInclude Include="system.h" />
+    <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="blockarray3d.cpp" />
     <ClCompile Include="blocinfo.cpp" />
     <ClCompile Include="chunk.cpp" />
+    <ClCompile Include="engine.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="openglcontext.cpp" />
+    <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

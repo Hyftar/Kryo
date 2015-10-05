@@ -1,4 +1,3 @@
-#include "define.h"
 #include "chunk.h"
 
 KRYO_BEGIN_NAMESPACE
