@@ -20,7 +20,7 @@ public:
 private:
     BlockType m_type;
     std::string m_name;
-    int m_durability = 0;
+    int m_durability;
 };
 
 KRYO_END_NAMESPACE

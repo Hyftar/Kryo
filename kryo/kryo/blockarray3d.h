@@ -24,9 +24,7 @@ private:
     void ValidateCoordinates(int x, int y, int z) const;
 
 private:
-    int m_width;
-    int m_height;
-    int m_depth;
+    int m_width, m_height, m_depth;
     BlockType* m_blocks;
 };
 

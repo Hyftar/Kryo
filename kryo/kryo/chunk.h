@@ -2,6 +2,7 @@
 #define KRYO_CHUNK_H
 
 #include "global.h"
+#include "define.h"
 #include "blockarray3d.h"
 
 KRYO_BEGIN_NAMESPACE
