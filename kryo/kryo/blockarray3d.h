@@ -11,7 +11,7 @@ class BlockArray3d
 public:
     BlockArray3d(int width, int height, int depth);
     BlockArray3d(const BlockArray3d &source);
-    virtual ~BlockArray3d();
+    ~BlockArray3d();
     void Set(int x, int y, int z, BlockType type);
     void Set(int idx, BlockType type);
     BlockType Get(int x, int y, int z) const;
