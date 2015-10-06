@@ -53,4 +53,8 @@ int main(int argc, char** argv)
 {
     std::cout << "Chunk test: " << (ChunkTest() ? "passed" : "failed") << std::endl;
     std::cout << "Block test: " << (BlockTest() ? "passed" : "failed") << std::endl;
+
+    Kryo::Engine engine;
+    engine.SetMaxFps(60);
+    engine.Start("Kryo", 800, 600, false);
 }
