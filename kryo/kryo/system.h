@@ -18,6 +18,8 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 #endif
