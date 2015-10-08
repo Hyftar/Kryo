@@ -48,6 +48,7 @@ void Engine::DeInit()
 void Engine::LoadResource()
 {
     LoadTexture(m_textureFloor, TEXTURE_PATH "checker.bmp");
+    LoadTexture(m_textureCube, TEXTURE_PATH "tile.jpg");
 }
 
 void Engine::UnloadResource()
@@ -84,6 +85,8 @@ void Engine::Render(float elapsedTime)
         glTexCoord2f(0, nbRep);
         glVertex3f(-100.f, -2.f, -100.f);
     glEnd();
+
+    DrawCube(gameTime, 0, 0, -7, 0, 100);
 }
 
 void Engine::KeyPressEvent(unsigned char key)
@@ -178,6 +181,51 @@ bool Engine::LoadTexture(Texture& texture, const std::string& filename, bool sto
     }
 
     return true;
+}
+
+// TODO: Ajouter le support pour les textures.
+void Engine::DrawCube(const float& gameTime, int x, int y, int z, float rotX, float rotY, float rotZ)
+{
+    glPushMatrix();
+        glTranslatef(x, y, z);
+        if (rotX != 0)
+            glRotatef(rotX * gameTime, 1.f, 0, 0);
+        if (rotY != 0)
+            glRotatef(rotY * gameTime, 0, 1.f, 0);
+        if (rotZ != 0)
+            glRotatef(rotZ * gameTime, 0, 0, 1.f);
+        glBegin(GL_QUADS);
+            glVertex3f(0.5f, 0.5f, -0.5f);
+            glVertex3f(-0.5f, 0.5f, -0.5f);
+            glVertex3f(-0.5f, 0.5f, 0.5f);
+            glVertex3f(0.5f, 0.5f, 0.5f);
+
+            glVertex3f(0.5f, 0.5f, -0.5f);
+            glVertex3f(0.5f, -0.5f, -0.5f);
+            glVertex3f(-0.5f, -0.5f, -0.5f);
+            glVertex3f(-0.5f, 0.5f, -0.5f);
+
+            glVertex3f(0.5f, 0.5f, 0.5f);
+            glVertex3f(0.5f, -0.5f, 0.5f);
+            glVertex3f(-0.5f, -0.5f, 0.5f);
+            glVertex3f(-0.5f, 0.5f, 0.5f);
+
+            glVertex3f(0.5f, 0.5f, 0.5f);
+            glVertex3f(0.5f, 0.5f, -0.5f);
+            glVertex3f(0.5f, -0.5f, -0.5f);
+            glVertex3f(0.5f, -0.5f, 0.5f);
+
+            glVertex3f(-0.5f, 0.5f, 0.5f);
+            glVertex3f(-0.5f, 0.5f, -0.5f);
+            glVertex3f(-0.5f, -0.5f, -0.5f);
+            glVertex3f(-0.5f, -0.5f, 0.5f);
+
+            glVertex3f(0.5f, -0.5f, -0.5f);
+            glVertex3f(-0.5f, -0.5f, -0.5f);
+            glVertex3f(-0.5f, -0.5f, 0.5f);
+            glVertex3f(0.5f, -0.5f, 0.5f);
+        glEnd();
+    glPopMatrix();
 }
 
 KRYO_END_NAMESPACE

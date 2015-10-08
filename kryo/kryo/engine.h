@@ -26,6 +26,7 @@ public:
     virtual void MouseReleaseEvent(const MOUSE_BUTTON &button, int x, int y);
 private:
     bool LoadTexture(Texture& texture, const std::string& filename, bool stopOnError = true);
+    void DrawCube(const float& elapsedTime, int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
 private:
     bool m_wireframe;
     bool m_moveUp, m_moveDown, m_moveLeft, m_moveRight;
