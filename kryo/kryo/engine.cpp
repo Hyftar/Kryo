@@ -24,7 +24,6 @@ void Engine::Init()
     glEnable(GL_LIGHTING);
     glEnable(GL_LINE_SMOOTH);
 
-
     // Light
     GLfloat light0Pos[4] = { 0.0f, CHUNK_SIZE_HEIGHT, 0.0f, 1.0f };
     GLfloat light0Amb[4] = { 0.9f, 0.9f, 0.9f, 1.0f };
@@ -86,7 +85,7 @@ void Engine::Render(float elapsedTime)
         glVertex3f(-100.f, -2.f, -100.f);
     glEnd();
 
-    DrawCube(gameTime, 0, 0, -7, 0, 100);
+    DrawCube(0, 0, -7, 0, 100 * gameTime);
 }
 
 void Engine::KeyPressEvent(unsigned char key)
@@ -113,10 +112,7 @@ void Engine::KeyPressEvent(unsigned char key)
         break;
     case 24: // Y
         m_wireframe = !m_wireframe;
-        if (m_wireframe)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        else
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glPolygonMode(GL_FRONT_AND_BACK, (m_wireframe ? GL_LINE : GL_FILL));
         break;
     default:
         std::cout << "Unhandled key: " << (int)key << std::endl;
@@ -184,16 +180,16 @@ bool Engine::LoadTexture(Texture& texture, const std::string& filename, bool sto
 }
 
 // TODO: Ajouter le support pour les textures.
-void Engine::DrawCube(const float& gameTime, int x, int y, int z, float rotX, float rotY, float rotZ)
+void Engine::DrawCube(int x, int y, int z, float rotX, float rotY, float rotZ)
 {
     glPushMatrix();
         glTranslatef(x, y, z);
         if (rotX != 0)
-            glRotatef(rotX * gameTime, 1.f, 0, 0);
+            glRotatef(rotX, 1.f, 0, 0);
         if (rotY != 0)
-            glRotatef(rotY * gameTime, 0, 1.f, 0);
+            glRotatef(rotY, 0, 1.f, 0);
         if (rotZ != 0)
-            glRotatef(rotZ * gameTime, 0, 0, 1.f);
+            glRotatef(rotZ, 0, 0, 1.f);
         glBegin(GL_QUADS);
             glVertex3f(0.5f, 0.5f, -0.5f);
             glVertex3f(-0.5f, 0.5f, -0.5f);
