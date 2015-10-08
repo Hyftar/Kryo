@@ -91,6 +91,7 @@
     <ClInclude Include="openglcontext.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="kryocore.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="system.h" />
     <ClInclude Include="texture.h" />
   </ItemGroup>
@@ -101,6 +102,7 @@
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="openglcontext.cpp" />
+    <ClCompile Include="player.cpp" />
     <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

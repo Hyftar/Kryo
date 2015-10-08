@@ -6,5 +6,6 @@
 #include "blockarray3d.h"
 #include "chunk.h"
 #include "engine.h"
+#include "player.h"
 
 #endif
