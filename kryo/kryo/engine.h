@@ -5,6 +5,7 @@
 #include "define.h"
 #include "openglcontext.h"
 #include "texture.h"
+#include "player.h"
 
 KRYO_BEGIN_NAMESPACE
 
@@ -23,13 +24,16 @@ public:
     virtual void MouseMoveEvent(int x, int y);
     virtual void MousePressEvent(const MOUSE_BUTTON &button, int x, int y);
     virtual void MouseReleaseEvent(const MOUSE_BUTTON &button, int x, int y);
-
 private:
     bool LoadTexture(Texture& texture, const std::string& filename, bool stopOnError = true);
-
 private:
     bool m_wireframe;
+    bool m_moveUp, m_moveDown, m_moveLeft, m_moveRight;
+
     Texture m_textureFloor;
+    Texture m_textureCube;
+
+    Player m_player;
 };
 
 KRYO_END_NAMESPACE

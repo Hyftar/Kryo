@@ -2,7 +2,7 @@
 
 KRYO_BEGIN_NAMESPACE
 
-Engine::Engine() : m_wireframe(false)
+Engine::Engine() : m_wireframe(false), m_moveUp(false), m_moveDown(false), m_moveRight(false), m_moveLeft(false)
 {
 }
 
@@ -65,21 +65,24 @@ void Engine::Render(float elapsedTime)
     // Transformations initiales
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    m_player.Move(m_moveUp, m_moveDown, m_moveLeft, m_moveRight, elapsedTime);
+    m_player.ApplyRotation();
+    m_player.ApplyTranslation();
 
     // Plancher
     // Les vertex doivent etre affiches dans le sens anti-horaire (CCW)
     m_textureFloor.Bind();
     float nbRep = 50.f;
     glBegin(GL_QUADS);
-    glNormal3f(0, 1, 0); // Normal vector
-    glTexCoord2f(0, 0);
-    glVertex3f(-100.f, -2.f, 100.f);
-    glTexCoord2f(nbRep, 0);
-    glVertex3f(100.f, -2.f, 100.f);
-    glTexCoord2f(nbRep, nbRep);
-    glVertex3f(100.f, -2.f, -100.f);
-    glTexCoord2f(0, nbRep);
-    glVertex3f(-100.f, -2.f, -100.f);
+        glNormal3f(0, 1, 0); // Normal vector
+        glTexCoord2f(0, 0);
+        glVertex3f(-100.f, -2.f, 100.f);
+        glTexCoord2f(nbRep, 0);
+        glVertex3f(100.f, -2.f, 100.f);
+        glTexCoord2f(nbRep, nbRep);
+        glVertex3f(100.f, -2.f, -100.f);
+        glTexCoord2f(0, nbRep);
+        glVertex3f(-100.f, -2.f, -100.f);
     glEnd();
 }
 
@@ -93,22 +96,45 @@ void Engine::KeyPressEvent(unsigned char key)
     case 94: // F10
         SetFullscreen(!IsFullscreen());
         break;
-    default:
-        std::cout << "Unhandled key: " << (int)key << std::endl;
-    }
-
-}
-
-void Engine::KeyReleaseEvent(unsigned char key)
-{
-    switch (key)
-    {
+    case 0: // A
+        m_moveLeft = true;
+        break;
+    case 22: // W
+        m_moveUp = true;
+        break;
+    case 18: // S
+        m_moveDown = true;
+        break;
+    case 3: // D
+        m_moveRight = true;
+        break;
     case 24: // Y
         m_wireframe = !m_wireframe;
         if (m_wireframe)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         else
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        break;
+    default:
+        std::cout << "Unhandled key: " << (int)key << std::endl;
+    }
+}
+
+void Engine::KeyReleaseEvent(unsigned char key)
+{
+    switch (key)
+    {
+    case 0: // A
+        m_moveLeft = false;
+        break;
+    case 22: // W
+        m_moveUp = false;
+        break;
+    case 18: // S
+        m_moveDown = false;
+        break;
+    case 3: // D
+        m_moveRight = false;
         break;
     }
 }
@@ -123,6 +149,12 @@ void Engine::MouseMoveEvent(int x, int y)
     if (x == (Width() / 2) && y == (Height() / 2))
         return;
     CenterMouse();
+    MakeRelativeToCenter(x, y);
+    if (x != (Width() / 2))
+        m_player.TurnLeftRight(x);
+
+    if (y != (Height() / 2))
+        m_player.TurnTopBottom(y);
 }
 
 void Engine::MousePressEvent(const MOUSE_BUTTON &button, int x, int y)
