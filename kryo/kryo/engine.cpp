@@ -2,13 +2,10 @@
 
 KRYO_BEGIN_NAMESPACE
 
-Engine::Engine() : m_wireframe(false), m_moveUp(false), m_moveDown(false), m_moveRight(false), m_moveLeft(false)
-{
-}
+Engine::Engine()
+    : m_wireframe(false), m_moveUp(false), m_moveDown(false), m_moveLeft(false), m_moveRight(false) { }
 
-Engine::~Engine()
-{
-}
+Engine::~Engine() { }
 
 void Engine::Init()
 {

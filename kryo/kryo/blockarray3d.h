@@ -1,5 +1,5 @@
-#ifndef KRYO_BlockArray3d
-#define KRYO_BlockArray3d
+#ifndef KRYO_BLOCKARRAY3D
+#define KRYO_BLOCKARRAY3D
 
 #include "global.h"
 #include "define.h"

@@ -7,18 +7,18 @@ Player::Player(float posX, float posY, float posZ, float rotX, float rotY, float
 
 Player::~Player() { }
 
-// TODO: Ajouter une variable sensibilité plutôt que l'approche ci-dessous.
+// TODO: Ajouter une variable sensibilitÃ© plutÃ´t que l'approche ci-dessous.
 void Player::TurnLeftRight(float value)
 {
-    m_rotY += value * 0.3;
+    m_rotY += value * 0.01;
     if (m_rotY > 360)
         m_rotY -= 360;
 }
 
-// TODO: Ajouter une variable sensibilité plutôt que l'approche ci-dessous.
+// TODO: Ajouter une variable sensibilitÃ© plutÃ´t que l'approche ci-dessous.
 void Player::TurnTopBottom(float value)
 {
-    m_rotX += value * 0.3;
+    m_rotX += value * 0.01;
     if (m_rotX > 360)
         m_rotX -= 360;
 }
