@@ -176,7 +176,6 @@ bool Engine::LoadTexture(Texture& texture, const std::string& filename, bool sto
     return true;
 }
 
-// TODO: Ajouter le support pour les textures.
 void Engine::DrawCube(int x, int y, int z, float rotX, float rotY, float rotZ)
 {
     glPushMatrix();
@@ -187,35 +186,60 @@ void Engine::DrawCube(int x, int y, int z, float rotX, float rotY, float rotZ)
             glRotatef(rotY, 0, 1.f, 0);
         if (rotZ != 0)
             glRotatef(rotZ, 0, 0, 1.f);
+        m_textureCube.Bind();
         glBegin(GL_QUADS);
+            glTexCoord2f(0, 0);
             glVertex3f(0.5f, 0.5f, -0.5f);
+            glTexCoord2f(1.f, 0);
             glVertex3f(-0.5f, 0.5f, -0.5f);
+            glTexCoord2f(1.f, 1.f);
             glVertex3f(-0.5f, 0.5f, 0.5f);
+            glTexCoord2f(0, 1.f);
             glVertex3f(0.5f, 0.5f, 0.5f);
 
+            glTexCoord2f(0, 0);
             glVertex3f(0.5f, 0.5f, -0.5f);
+            glTexCoord2f(1.f, 0);
             glVertex3f(0.5f, -0.5f, -0.5f);
+            glTexCoord2f(1.f, 1.f);
             glVertex3f(-0.5f, -0.5f, -0.5f);
+            glTexCoord2f(0, 1.f);
             glVertex3f(-0.5f, 0.5f, -0.5f);
 
+            glTexCoord2f(0, 0);
             glVertex3f(0.5f, 0.5f, 0.5f);
+            glTexCoord2f(1.f, 0);
             glVertex3f(0.5f, -0.5f, 0.5f);
+            glTexCoord2f(1.f, 1.f);
             glVertex3f(-0.5f, -0.5f, 0.5f);
+            glTexCoord2f(0, 1.f);
             glVertex3f(-0.5f, 0.5f, 0.5f);
 
+            glTexCoord2f(0, 0);
             glVertex3f(0.5f, 0.5f, 0.5f);
+            glTexCoord2f(1.f, 0);
             glVertex3f(0.5f, 0.5f, -0.5f);
+            glTexCoord2f(1.f, 1.f);
             glVertex3f(0.5f, -0.5f, -0.5f);
+            glTexCoord2f(0, 1.f);
             glVertex3f(0.5f, -0.5f, 0.5f);
 
+            glTexCoord2f(0, 0);
             glVertex3f(-0.5f, 0.5f, 0.5f);
+            glTexCoord2f(1.f, 0);
             glVertex3f(-0.5f, 0.5f, -0.5f);
+            glTexCoord2f(1.f, 1.f);
             glVertex3f(-0.5f, -0.5f, -0.5f);
+            glTexCoord2f(0, 1.f);
             glVertex3f(-0.5f, -0.5f, 0.5f);
 
+            glTexCoord2f(0, 0);
             glVertex3f(0.5f, -0.5f, -0.5f);
+            glTexCoord2f(1.f, 0);
             glVertex3f(-0.5f, -0.5f, -0.5f);
+            glTexCoord2f(1.f, 1.f);
             glVertex3f(-0.5f, -0.5f, 0.5f);
+            glTexCoord2f(0, 1.f);
             glVertex3f(0.5f, -0.5f, 0.5f);
         glEnd();
     glPopMatrix();

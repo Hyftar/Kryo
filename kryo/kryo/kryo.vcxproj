@@ -97,7 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="blockarray3d.cpp" />
-    <ClCompile Include="blocinfo.cpp" />
+    <ClCompile Include="blockinfo.cpp" />
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="main.cpp" />
