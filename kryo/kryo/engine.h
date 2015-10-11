@@ -28,6 +28,7 @@ public:
 private:
     bool LoadTexture(Texture& texture, const std::string& filename, bool stopOnError = true);
     void DrawCube(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
+    void DrawHexagon(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
 
 private:
     bool m_wireframe;
