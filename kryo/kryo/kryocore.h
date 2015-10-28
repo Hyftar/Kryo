@@ -3,7 +3,7 @@
 
 #include "define.h"
 #include "blockinfo.h"
-#include "blockarray3d.h"
+#include "array3d.h"
 #include "chunk.h"
 #include "engine.h"
 #include "player.h"

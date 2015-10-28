@@ -1,12 +1,8 @@
 #ifndef KRYO_DEFINE_H
 #define KRYO_DEFINE_H
 
-enum BlockType
-{
-    BTYPE_AIR,
-    BTYPE_DIRT,
-    BTYPE_GRASS
-};
+typedef uint8_t BlockType;
+enum BLOCK_TYPE { BTYPE_AIR, BTYPE_DIRT, BTYPE_GRASS };
 
 #define CHUNK_SIZE_WIDTH 16
 #define CHUNK_SIZE_HEIGHT 128

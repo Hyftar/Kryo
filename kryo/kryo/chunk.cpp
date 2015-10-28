@@ -1,28 +1,59 @@
 #include "chunk.h"
+#include "define.h"
 
 KRYO_BEGIN_NAMESPACE
 
-Chunk::Chunk()
-    : BlockArray3d(CHUNK_SIZE_WIDTH, CHUNK_SIZE_HEIGHT, CHUNK_SIZE_DEPTH) { }
+#define KRYO_CHUNK_SIZE (m_width * m_height * m_depth)
+
+Chunk::Chunk(int x, int y, int z)
+    : m_blocks(x, y, z), m_width(x), m_height(y), m_depth(z) { }
+
+Chunk::Chunk(Chunk &source)
+    : m_width(source.m_width), m_height(source.m_height), m_depth(source.m_depth),
+      m_blocks(Array3d<BlockType>(source.m_blocks)) { }
 
 Chunk::~Chunk() { }
 
-// TODO: renommer afin d'uniformiser la nomenclature
-void Chunk::RemoveBlock(int x, int y, int z)
+void Chunk::Remove(int idx)
 {
-    Set(x, y, z, BTYPE_AIR);
+    m_blocks.Set(idx, BTYPE_AIR);
 }
 
-// TODO: déprécier/rétirer en faveur de la fonction équivalente de la classe sous-jacente.
-void Chunk::SetBlock(int x, int y, int z, BlockType type)
+void Chunk::Remove(int x, int y, int z)
 {
-    Set(x, y, z, type);
+    m_blocks.Set(x, y, z, BTYPE_AIR);
 }
 
-// TODO: déprécier/rétirer en faveur de la fonction équivalente de la classe sous-jacente.
-BlockType Chunk::GetBlock(int x, int y, int z) const
+void Chunk::Set(int idx, BlockType type)
 {
-    return Get(x, y, z);
+    m_blocks.Set(idx, type);
 }
+
+void Chunk::Set(int x, int y, int z, BlockType type)
+{
+    m_blocks.Set(x, y, z, type);
+}
+
+BlockType Chunk::Get(int idx) const
+{
+    return m_blocks.Get(idx);
+}
+
+BlockType Chunk::Get(int x, int y, int z) const
+{
+    return m_blocks.Get(x, y, z);
+}
+
+void Chunk::Reset(BlockType type)
+{
+    m_blocks.Reset(type);
+}
+
+int Chunk::GetBlockCount() const
+{
+    return KRYO_CHUNK_SIZE;
+}
+
+#undef KRYO_CHUNK_SIZE
 
 KRYO_END_NAMESPACE

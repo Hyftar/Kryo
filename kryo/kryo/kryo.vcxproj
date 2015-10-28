@@ -76,6 +76,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
     </ClCompile>
     <Link>
       <AdditionalDependencies>sfml-main-d.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;GlU32.Lib;OpenGL32.Lib;DevIL.lib;ILU.lib;ILUT.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -83,7 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="blockarray3d.h" />
+    <ClInclude Include="array3d.h" />
     <ClInclude Include="blockinfo.h" />
     <ClInclude Include="chunk.h" />
     <ClInclude Include="define.h" />
@@ -96,7 +97,6 @@
     <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="blockarray3d.cpp" />
     <ClCompile Include="blockinfo.cpp" />
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="engine.cpp" />
