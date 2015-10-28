@@ -58,7 +58,6 @@ void Engine::Render(float elapsedTime)
     gameTime += elapsedTime;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     // Transformations initiales
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -81,8 +80,7 @@ void Engine::Render(float elapsedTime)
         glTexCoord2f(0, nbRep);
         glVertex3f(-100.f, -2.f, -100.f);
     glEnd();
-
-    DrawHexagon(0, 0, -7, 0, 100 * gameTime);
+    DrawHexagon(0, -1, -7);
 }
 
 void Engine::KeyPressEvent(unsigned char key)
@@ -189,55 +187,56 @@ void Engine::DrawHexagon(int x, int y, int z, float rotX, float rotY, float rotZ
 
         // Top of the hexagon
         glBegin(GL_POLYGON);
-            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), 0.5f, float(sin(M_PI / 6.f) * 0.5f));
-            glVertex3f(0, 0.5f, 0.5f);
-            glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(0, 0.5f, -0.5f);
             glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
+            glVertex3f(0, 0.5f, -0.5f);
+            glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
+            glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
+            glVertex3f(0, 0.5f, 0.5f);
+            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), 0.5f, float(sin(M_PI / 6.f) * 0.5f));
+
         glEnd();
 
         // Bottom of the hexagon
         glBegin(GL_POLYGON);
-            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), -0.5f, float(sin(M_PI / 6.f) * 0.5f));
             glVertex3f(0, -0.5f, 0.5f);
             glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
             glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
             glVertex3f(0, -0.5f, -0.5f);
             glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
+            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), -0.5f, float(sin(M_PI / 6.f) * 0.5f));
         glEnd();
 
         // Connections
         glBegin(GL_QUADS);
-            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), -0.5f, float(sin(M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), 0.5f, float(sin(M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
             glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
-
-            glVertex3f(0, -0.5f, 0.5f);
-            glVertex3f(0, 0.5f, 0.5f);
+            glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
             glVertex3f(float(cos(M_PI / 6.f) * 0.5f), 0.5f, float(sin(M_PI / 6.f) * 0.5f));
             glVertex3f(float(cos(M_PI / 6.f) * 0.5f), -0.5f, float(sin(M_PI / 6.f) * 0.5f));
 
-            glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
+            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), -0.5f, float(sin(M_PI / 6.f) * 0.5f));
+            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), 0.5f, float(sin(M_PI / 6.f) * 0.5f));
             glVertex3f(0, 0.5f, 0.5f);
             glVertex3f(0, -0.5f, 0.5f);
 
-            glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
+            glVertex3f(0, -0.5f, 0.5f);
+            glVertex3f(0, 0.5f, 0.5f);
             glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
             glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
 
-            glVertex3f(0, -0.5f, -0.5f);
-            glVertex3f(0, 0.5f, -0.5f);
+            glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
+            glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
             glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
             glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
 
-            glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
+            glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
+            glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
             glVertex3f(0, 0.5f, -0.5f);
             glVertex3f(0, -0.5f, -0.5f);
+
+            glVertex3f(0, -0.5f, -0.5f);
+            glVertex3f(0, 0.5f, -0.5f);
+            glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
+            glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
         glEnd();
     glPopMatrix();
 }
@@ -254,6 +253,7 @@ void Engine::DrawCube(int x, int y, int z, float rotX, float rotY, float rotZ)
             glRotatef(rotZ, 0, 0, 1.f);
         m_textureCube.Bind();
         glBegin(GL_QUADS);
+            // TOP
             glTexCoord2f(0, 0);
             glVertex3f(0.5f, 0.5f, -0.5f);
             glTexCoord2f(1.f, 0);
@@ -273,22 +273,22 @@ void Engine::DrawCube(int x, int y, int z, float rotX, float rotY, float rotZ)
             glVertex3f(-0.5f, 0.5f, -0.5f);
 
             glTexCoord2f(0, 0);
-            glVertex3f(0.5f, 0.5f, 0.5f);
-            glTexCoord2f(1.f, 0);
-            glVertex3f(0.5f, -0.5f, 0.5f);
-            glTexCoord2f(1.f, 1.f);
-            glVertex3f(-0.5f, -0.5f, 0.5f);
-            glTexCoord2f(0, 1.f);
             glVertex3f(-0.5f, 0.5f, 0.5f);
+            glTexCoord2f(1.f, 0);
+            glVertex3f(-0.5f, -0.5f, 0.5f);
+            glTexCoord2f(1.f, 1.f);
+            glVertex3f(0.5f, -0.5f, 0.5f);
+            glTexCoord2f(0, 1.f);
+            glVertex3f(0.5f, 0.5f, 0.5f);
 
             glTexCoord2f(0, 0);
-            glVertex3f(0.5f, 0.5f, 0.5f);
-            glTexCoord2f(1.f, 0);
-            glVertex3f(0.5f, 0.5f, -0.5f);
-            glTexCoord2f(1.f, 1.f);
-            glVertex3f(0.5f, -0.5f, -0.5f);
-            glTexCoord2f(0, 1.f);
             glVertex3f(0.5f, -0.5f, 0.5f);
+            glTexCoord2f(1.f, 0);
+            glVertex3f(0.5f, -0.5f, -0.5f);
+            glTexCoord2f(1.f, 1.f);
+            glVertex3f(0.5f, 0.5f, -0.5f);
+            glTexCoord2f(0, 1.f);
+            glVertex3f(0.5f, 0.5f, 0.5f);
 
             glTexCoord2f(0, 0);
             glVertex3f(-0.5f, 0.5f, 0.5f);
@@ -299,14 +299,15 @@ void Engine::DrawCube(int x, int y, int z, float rotX, float rotY, float rotZ)
             glTexCoord2f(0, 1.f);
             glVertex3f(-0.5f, -0.5f, 0.5f);
 
+            // BOTTOM
             glTexCoord2f(0, 0);
-            glVertex3f(0.5f, -0.5f, -0.5f);
-            glTexCoord2f(1.f, 0);
-            glVertex3f(-0.5f, -0.5f, -0.5f);
-            glTexCoord2f(1.f, 1.f);
-            glVertex3f(-0.5f, -0.5f, 0.5f);
-            glTexCoord2f(0, 1.f);
             glVertex3f(0.5f, -0.5f, 0.5f);
+            glTexCoord2f(1.f, 0);
+            glVertex3f(-0.5f, -0.5f, 0.5f);
+            glTexCoord2f(1.f, 1.f);
+            glVertex3f(-0.5f, -0.5f, -0.5f);
+            glTexCoord2f(0, 1.f);
+            glVertex3f(0.5f, -0.5f, -0.5f);
         glEnd();
     glPopMatrix();
 }
