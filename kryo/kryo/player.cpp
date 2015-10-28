@@ -31,13 +31,13 @@ void Player::Move(bool front, bool back, bool left, bool right, float elapsedTim
         yrotrad = (m_rotY / 180 * M_PI);
         if (front)
         {
-            m_posX -= float(sin(yrotrad)) * m_speed * elapsedTime;
-            m_posZ += float(cos(yrotrad)) * m_speed * elapsedTime;
+            m_posX += float(sin(yrotrad)) * m_speed * elapsedTime;
+            m_posZ -= float(cos(yrotrad)) * m_speed * elapsedTime;
         }
         else
         {
-            m_posX += float(sin(yrotrad)) * m_speed * elapsedTime;
-            m_posZ -= float(cos(yrotrad)) * m_speed * elapsedTime;
+            m_posX -= float(sin(yrotrad)) * m_speed * elapsedTime;
+            m_posZ += float(cos(yrotrad)) * m_speed * elapsedTime;
         }
     }
 
@@ -46,13 +46,13 @@ void Player::Move(bool front, bool back, bool left, bool right, float elapsedTim
         yrotrad = (m_rotY / 180 * M_PI);
         if (right)
         {
-            m_posX -= float(cos(yrotrad)) * m_speed * elapsedTime;
-            m_posZ -= float(sin(yrotrad)) * m_speed * elapsedTime;
+            m_posX += float(cos(yrotrad)) * m_speed * elapsedTime;
+            m_posZ += float(sin(yrotrad)) * m_speed * elapsedTime;
         }
         else
         {
-            m_posX += float(cos(yrotrad)) * m_speed * elapsedTime;
-            m_posZ += float(sin(yrotrad)) * m_speed * elapsedTime;
+            m_posX -= float(cos(yrotrad)) * m_speed * elapsedTime;
+            m_posZ -= float(sin(yrotrad)) * m_speed * elapsedTime;
         }
     }
 }
@@ -65,7 +65,7 @@ void Player::ApplyRotation() const
 
 void Player::ApplyTranslation() const
 {
-    glTranslatef(m_posX, m_posY, m_posZ);
+    glTranslatef(-m_posX, -m_posY, -m_posZ);
 }
 
 KRYO_END_NAMESPACE
