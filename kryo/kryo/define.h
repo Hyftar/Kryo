@@ -1,6 +1,8 @@
 #ifndef KRYO_DEFINE_H
 #define KRYO_DEFINE_H
 
+#include "global.h"
+
 typedef uint8_t BlockType;
 enum BLOCK_TYPE { BTYPE_AIR, BTYPE_DIRT, BTYPE_GRASS };
 
