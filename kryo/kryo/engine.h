@@ -34,10 +34,12 @@ private:
     bool m_wireframe;
     bool m_moveUp, m_moveDown, m_moveLeft, m_moveRight;
 
+    Player m_player;
+    Chunk m_testChunk;
+
     Texture m_textureFloor;
     Texture m_textureCube;
-
-    Player m_player;
+    Shader m_shader01;
 };
 
 KRYO_END_NAMESPACE

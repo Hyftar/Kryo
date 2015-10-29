@@ -80,7 +80,16 @@ void Engine::Render(float elapsedTime)
         glTexCoord2f(0, nbRep);
         glVertex3f(-100.f, -2.f, -100.f);
     glEnd();
-    DrawHexagon(0, -1, -7);
+
+    m_textureCube.Bind();
+    if (m_testChunk.IsDirty())
+        m_testChunk.Update();
+
+    m_shader01.Use();
+    m_testChunk.Render();
+    Shader::Disable();
+
+    //DrawHexagon(0, -1, -7);
 }
 
 void Engine::KeyPressEvent(unsigned char key)
@@ -140,14 +149,19 @@ void Engine::MouseMoveEvent(int x, int y)
     // dans une boucle infinie où l'appel à CenterMouse génère un
     // MouseMoveEvent, qui rapelle CenterMouse qui rapelle un autre
     // MouseMoveEvent, etc
-    if (x == (Width() / 2) && y == (Height() / 2))
+    int posX = Width() / 2,
+        posY = Height() / 2;
+
+    if (x == posX && y == posY)
         return;
+
     CenterMouse();
     MakeRelativeToCenter(x, y);
-    if (x != (Width() / 2))
+
+    if (x != posX)
         m_player.TurnLeftRight(x);
 
-    if (y != (Height() / 2))
+    if (y != posY)
         m_player.TurnTopBottom(y);
 }
 

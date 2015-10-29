@@ -3,6 +3,7 @@
 
 #include "global.h"
 #include "define.h"
+#include "chunkmesh.h"
 #include "array3d.h"
 
 KRYO_BEGIN_NAMESPACE
@@ -19,13 +20,22 @@ public:
     void Set(int idx, BlockType Type);
     void Set(int x, int y, int z, BlockType type);
     void Reset(BlockType type = BTYPE_AIR);
+    void Update();
+    void Render() const;
     BlockType Get(int idx) const;
     BlockType Get(int x, int y, int z) const;
+    bool IsDirty() const;
+
 private:
     void ValidateCoordinates(int idx) const;
     void ValidateCoordinates(int x, int y, int z) const;
+    void AddBlockToMesh(ChunkMesh::VertexData * vd, int & count, BlockType bt, int x, int y, int z);
+    void PopulateArrayTest();
+
 private:
+    bool m_isDirty;
     int m_width, m_height, m_depth;
+    ChunkMesh m_chunkMesh;
     Array3d<BlockType> m_blocks;
 };
 
