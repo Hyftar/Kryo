@@ -16,9 +16,16 @@ static_assert(sizeof(int16_t) == 2, "The int16 value type must be of exactly 2 b
 static_assert(sizeof(int32_t) == 4, "The int32 value type must be of exactly 4 bytes");
 static_assert(sizeof(int64_t) == 8, "The int64 value type must be of exactly 8 bytes");
 
+// GLEW
+#include <gl/glew.h>
+
+// SFML
 #include <SFML/Window.hpp>
+
+// DevIL
 #include <IL/il.h>
 
+// OpenGL
 #include <gl/GL.h>
 #include <gl/GLU.h>
 

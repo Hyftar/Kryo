@@ -66,8 +66,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeOutput>kryo.exe</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <IncludePath>external\devil178\include;external\sfml23\include;$(IncludePath)</IncludePath>
-    <LibraryPath>external\devil178\lib;external\sfml23\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>external\glew\include;external\devil178\include;external\sfml23\include;$(IncludePath)</IncludePath>
+    <LibraryPath>external\glew\lib;external\devil178\lib;external\sfml23\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>kryo.exe</NMakeOutput>
@@ -79,7 +79,7 @@
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>sfml-main-d.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;GlU32.Lib;OpenGL32.Lib;DevIL.lib;ILU.lib;ILUT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-main-d.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;GlU32.Lib;glew32.lib;OpenGL32.Lib;DevIL.lib;ILU.lib;ILUT.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
