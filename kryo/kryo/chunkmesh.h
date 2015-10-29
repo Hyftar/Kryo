@@ -1,8 +1,9 @@
-#ifndef CHUNKMESH_H
-#define CHUNKMESH_H
+#ifndef KRYO_CHUNKMESH_H
+#define KRYO_CHUNKMESH_H
 
 #include "global.h"
-#include "define.h"
+
+KRYO_BEGIN_NAMESPACE
 
 class ChunkMesh
 {
@@ -38,5 +39,7 @@ private:
     GLuint m_vertexVboId;
     GLuint m_indexVboId;
 };
+
+KRYO_END_NAMESPACE
 
 #endif

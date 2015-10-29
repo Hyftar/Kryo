@@ -1,8 +1,9 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef KRYO_SHADER_H
+#define KRYO_SHADER_H
 
 #include "global.h"
-#include "define.h"
+
+KRYO_BEGIN_NAMESPACE
 
 class Shader
 {
@@ -25,5 +26,7 @@ class Shader
         bool CheckShaderError(GLenum shader, bool verbose);
         bool CheckProgramError(GLenum program, bool showWarning, bool verbose);
 };
+
+KRYO_END_NAMESPACE
 
 #endif

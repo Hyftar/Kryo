@@ -1,9 +1,6 @@
-#include <cassert>
-#include <iostream>
-#include <fstream>
 #include "tool.h"
-#include "define.h"
-#include "global.h"
+
+KRYO_BEGIN_NAMESPACE
 
 bool Tool::LoadTextFile(const std::string& filename, std::string& buffer)
 {
@@ -66,3 +63,4 @@ void Tool::CheckGLError(const char* file, int line)
     }
 }
 
+KRYO_END_NAMESPACE

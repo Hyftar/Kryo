@@ -1,8 +1,7 @@
-#include "shader.h"
-#include "define.h"
 #include "tool.h"
-#include <iostream>
-#include <cassert>
+#include "shader.h"
+
+KRYO_BEGIN_NAMESPACE
 
 #ifndef WINDOWS
 
@@ -151,3 +150,5 @@ bool Shader::CheckProgramError(GLenum program, bool showWarning, bool verbose)
 }
 
 #endif
+
+KRYO_END_NAMESPACE

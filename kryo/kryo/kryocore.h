@@ -1,5 +1,8 @@
 #include "define.h"
 #include "blockinfo.h"
+#include "vector3.h"
+#include "texture.h"
+#include "shader.h"
 #include "array2d.h"
 #include "array3d.h"
 #include "chunk.h"

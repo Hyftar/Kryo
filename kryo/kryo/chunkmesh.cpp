@@ -1,5 +1,7 @@
 #include "chunkmesh.h"
 
+KRYO_BEGIN_NAMESPACE
+
 ChunkMesh::ChunkMesh() : m_isValid(false) { }
 
 ChunkMesh::~ChunkMesh()
@@ -44,7 +46,7 @@ void ChunkMesh::SetMeshData(VertexData* vd, int vertexCount)
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexVboId);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * vertexCount, idx, GL_STATIC_DRAW);
-    delete [] idx;
+    delete[] idx;
 
     m_isValid = true;
 }
@@ -78,3 +80,4 @@ int ChunkMesh::Count() const
     return m_vertexCount;
 }
 
+KRYO_END_NAMESPACE

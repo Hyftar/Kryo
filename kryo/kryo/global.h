@@ -3,6 +3,7 @@
 
 #include "system.h"
 #include <assert.h>
+#include <limits.h>
 
 #include <stdint.h>
 

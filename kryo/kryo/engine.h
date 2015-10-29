@@ -2,11 +2,11 @@
 #define KRYO_ENGINE_H
 
 #include "global.h"
-#include "define.h"
-#include "openglcontext.h"
+#include "player.h"
+#include "chunk.h"
 #include "texture.h"
 #include "shader.h"
-#include "kryocore.h"
+#include "openglcontext.h"
 
 KRYO_BEGIN_NAMESPACE
 

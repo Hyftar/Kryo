@@ -2,7 +2,6 @@
 #define KRYO_OPENGLCONTEXT_H
 
 #include "global.h"
-#include "define.h"
 
 KRYO_BEGIN_NAMESPACE
 

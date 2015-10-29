@@ -2,6 +2,7 @@
 #define KRYO_PLAYER_H
 
 #include "global.h"
+#include "vector3.h"
 
 KRYO_BEGIN_NAMESPACE
 

@@ -1,5 +1,9 @@
-#ifndef VECTOR_H
-#define VECTOR_H
+#ifndef KRYO_VECTOR_H
+#define KRYO_VECTOR_H
+
+#include "global.h"
+
+KRYO_BEGIN_NAMESPACE
 
 template <class T>
 class Vector3 : public sf::Vector3<T>
@@ -13,5 +17,7 @@ typedef Vector3<float> Vector3f;
 
 template <class T>
 Vector3<T>::Vector3(const T& x, const T& y, const T& z) : sf::Vector3<T>(x, y, z) { }
+
+KRYO_END_NAMESPACE
 
 #endif
