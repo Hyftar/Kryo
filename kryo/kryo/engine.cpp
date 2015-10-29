@@ -9,6 +9,12 @@ Engine::~Engine() { }
 
 void Engine::Init()
 {
+    GLenum err = glewInit();
+    if (err != GLEW_OK)
+    {
+        std::cerr << " Error while initializing GLEW... aborting (" << glewGetErrorString(err) << ") " << std::endl;
+        abort();
+    }
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_TEXTURE_2D);
     glMatrixMode(GL_PROJECTION);
@@ -45,6 +51,12 @@ void Engine::LoadResource()
 {
     LoadTexture(m_textureFloor, TEXTURE_PATH "checker.bmp");
     LoadTexture(m_textureCube, TEXTURE_PATH "tile.jpg");
+    std::cout << " Loading and compiling shaders ..." << std::endl;
+    if (!m_shader01.Load(SHADER_PATH "shader01.vert", SHADER_PATH "shader01.frag", true))
+    {
+        std::cout << " Failed to load shader " << std::endl;
+        exit(1);
+    }
 }
 
 void Engine::UnloadResource()

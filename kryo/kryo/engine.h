@@ -5,7 +5,8 @@
 #include "define.h"
 #include "openglcontext.h"
 #include "texture.h"
-#include "player.h"
+#include "shader.h"
+#include "kryocore.h"
 
 KRYO_BEGIN_NAMESPACE
 
@@ -39,6 +40,7 @@ private:
 
     Texture m_textureFloor;
     Texture m_textureCube;
+
     Shader m_shader01;
 };
 
