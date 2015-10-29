@@ -20,6 +20,7 @@ void Engine::Init()
     glShadeModel(GL_SMOOTH);
     glEnable(GL_LIGHTING);
     glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_CULL_FACE);
 
     // Light
     GLfloat light0Pos[4] = { 0.0f, CHUNK_SIZE_HEIGHT, 0.0f, 1.0f };
