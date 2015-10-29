@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="array2d.h" />
     <ClInclude Include="array3d.h" />
     <ClInclude Include="blockinfo.h" />
     <ClInclude Include="chunk.h" />
