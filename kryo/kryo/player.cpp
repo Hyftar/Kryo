@@ -3,7 +3,10 @@
 KRYO_BEGIN_NAMESPACE
 
 Player::Player(float posX, float posY, float posZ, float rotX, float rotY, float speed)
-    : m_posX(posX), m_posY(posY), m_posZ(posZ), m_rotX(rotX), m_rotY(rotY), m_speed(speed) { }
+    : m_position(Vector3f(posX, posY, posZ)), m_rotX(rotX), m_rotY(rotY), m_speed(speed) { }
+
+Player::Player(Vector3f position, float rotX, float rotY, float speed)
+    : m_position(position), m_rotX(rotX), m_rotY(rotY), m_speed(speed) { }
 
 Player::~Player() { }
 
@@ -31,13 +34,13 @@ void Player::Move(bool front, bool back, bool left, bool right, float elapsedTim
         yrotrad = (m_rotY / 180 * M_PI);
         if (front)
         {
-            m_posX += float(sin(yrotrad)) * m_speed * elapsedTime;
-            m_posZ -= float(cos(yrotrad)) * m_speed * elapsedTime;
+            m_position.x += float(sin(yrotrad)) * m_speed * elapsedTime;
+            m_position.z -= float(cos(yrotrad)) * m_speed * elapsedTime;
         }
         else
         {
-            m_posX -= float(sin(yrotrad)) * m_speed * elapsedTime;
-            m_posZ += float(cos(yrotrad)) * m_speed * elapsedTime;
+            m_position.x -= float(sin(yrotrad)) * m_speed * elapsedTime;
+            m_position.z += float(cos(yrotrad)) * m_speed * elapsedTime;
         }
     }
 
@@ -46,13 +49,13 @@ void Player::Move(bool front, bool back, bool left, bool right, float elapsedTim
         yrotrad = (m_rotY / 180 * M_PI);
         if (right)
         {
-            m_posX += float(cos(yrotrad)) * m_speed * elapsedTime;
-            m_posZ += float(sin(yrotrad)) * m_speed * elapsedTime;
+            m_position.x += float(cos(yrotrad)) * m_speed * elapsedTime;
+            m_position.z += float(sin(yrotrad)) * m_speed * elapsedTime;
         }
         else
         {
-            m_posX -= float(cos(yrotrad)) * m_speed * elapsedTime;
-            m_posZ -= float(sin(yrotrad)) * m_speed * elapsedTime;
+            m_position.x -= float(cos(yrotrad)) * m_speed * elapsedTime;
+            m_position.z -= float(sin(yrotrad)) * m_speed * elapsedTime;
         }
     }
 }
@@ -65,7 +68,12 @@ void Player::ApplyRotation() const
 
 void Player::ApplyTranslation() const
 {
-    glTranslatef(-m_posX, -m_posY, -m_posZ);
+    glTranslatef(-m_position.x, -m_position.y, -m_position.z);
+}
+
+Vector3f Player::Position() const
+{
+    return m_position;
 }
 
 KRYO_END_NAMESPACE
