@@ -25,6 +25,7 @@ static_assert(sizeof(int64_t) == 8, "The int64 value type must be of exactly 8 b
 
 // DevIL
 #include <IL/il.h>
+#include <IL/ilu.h>
 
 // OpenGL
 #include <gl/GL.h>
