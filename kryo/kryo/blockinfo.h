@@ -1,4 +1,3 @@
-// TODO: renommer 'SetDurabilite' et 'GetDurabilite' en 'SetDurability' et 'GetDurability, respectivement
 #ifndef KRYO_BLOCKINFO_H
 #define KRYO_BLOCKINFO_H
 
@@ -13,8 +12,8 @@ public:
     BlockInfo(BlockType type, const std::string& name);
     ~BlockInfo();
     BlockType GetType() const;
-    int GetDurabilite() const;
-    void SetDurabilite(int durability);
+    int GetDurability() const;
+    void SetDurability(int durability);
     void Afficher() const;
 
 private:

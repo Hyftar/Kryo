@@ -40,9 +40,9 @@ bool ChunkTest()
 bool BlockTest()
 {
     Kryo::BlockInfo* testBlock = new Kryo::BlockInfo(BTYPE_GRASS, "grass");
-    testBlock->SetDurabilite(5);
+    testBlock->SetDurability(5);
     testBlock->Afficher();
-    if (testBlock->GetDurabilite() != 5)
+    if (testBlock->GetDurability() != 5)
         return false;
 
     return true;

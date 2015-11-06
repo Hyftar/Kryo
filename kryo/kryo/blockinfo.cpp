@@ -12,12 +12,12 @@ BlockType BlockInfo::GetType() const
     return m_type;
 }
 
-int BlockInfo::GetDurabilite() const
+int BlockInfo::GetDurability() const
 {
     return m_durability;
 }
 
-void BlockInfo::SetDurabilite(int durability)
+void BlockInfo::SetDurability(int durability)
 {
     m_durability = durability;
 }
