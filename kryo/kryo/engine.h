@@ -33,7 +33,7 @@ private:
 
 private:
     bool m_wireframe;
-    bool m_moveUp, m_moveDown, m_moveLeft, m_moveRight;
+    bool m_moveForward, m_moveBackward, m_moveLeft, m_moveRight;
 
     Player m_player;
     Chunk m_testChunk;

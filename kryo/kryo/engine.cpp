@@ -3,7 +3,7 @@
 KRYO_BEGIN_NAMESPACE
 
 Engine::Engine()
-    : m_wireframe(false), m_moveUp(false), m_moveDown(false), m_moveLeft(false), m_moveRight(false) { }
+    : m_wireframe(false), m_moveForward(false), m_moveBackward(false), m_moveLeft(false), m_moveRight(false) { }
 
 Engine::~Engine() { }
 
@@ -73,7 +73,7 @@ void Engine::Render(float elapsedTime)
     // Transformations initiales
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    m_player.Move(m_moveUp, m_moveDown, m_moveLeft, m_moveRight, elapsedTime);
+    m_player.Move(m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, elapsedTime);
     m_player.ApplyRotation();
     m_player.ApplyTranslation();
 
@@ -118,10 +118,10 @@ void Engine::KeyPressEvent(unsigned char key)
         m_moveLeft = true;
         break;
     case 22: // W
-        m_moveUp = true;
+        m_moveForward = true;
         break;
     case 18: // S
-        m_moveDown = true;
+        m_moveBackward = true;
         break;
     case 3: // D
         m_moveRight = true;
@@ -143,10 +143,10 @@ void Engine::KeyReleaseEvent(unsigned char key)
         m_moveLeft = false;
         break;
     case 22: // W
-        m_moveUp = false;
+        m_moveForward = false;
         break;
     case 18: // S
-        m_moveDown = false;
+        m_moveBackward = false;
         break;
     case 3: // D
         m_moveRight = false;
