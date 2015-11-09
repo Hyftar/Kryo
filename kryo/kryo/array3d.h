@@ -38,7 +38,7 @@ Array3d<T>::Array3d(int width, int height, int depth)
 {
     assert(width > 0 && height > 0 && depth > 0);
     m_data = new T[KRYO_BLOCKARRAY3D_SIZE];
-    Reset(BTYPE_AIR);
+    Reset(T());
 }
 
 template <class T>

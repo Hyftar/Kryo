@@ -38,7 +38,7 @@ Array2d<T>::Array2d(int width, int height)
 {
     assert(width > 0 && height > 0);
     m_data = new T[KRYO_BLOCKARRAY2D_SIZE];
-    Reset(BTYPE_AIR);
+    Reset(T());
 }
 
 template <class T>
