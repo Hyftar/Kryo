@@ -61,6 +61,14 @@ void Player::Move(bool front, bool back, bool left, bool right, float elapsedTim
     }
 }
 
+void Player::MoveFreecam(bool up, bool down, float elapsedTime)
+{
+    if (up ^ down)
+    {
+        m_position.y += m_speed * elapsedTime * (up ? 1 : -1);
+    }
+}
+
 void Player::ApplyRotation() const
 {
     glRotatef(m_rotX, 1.f, 0, 0);
