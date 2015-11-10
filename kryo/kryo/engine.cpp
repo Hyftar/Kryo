@@ -139,8 +139,7 @@ void Engine::Render(float elapsedTime)
 
     // Plancher
     // Les vertex doivent etre affiches dans le sens anti-horaire (CCW)
-    m_textureFloor.Bind();
-    float nbRep = 50.f;
+    /*float nbRep = 50.f;
     glBegin(GL_QUADS);
         glNormal3f(0, 1, 0); // Normal vector
         glTexCoord2f(0, 0);
@@ -151,7 +150,7 @@ void Engine::Render(float elapsedTime)
         glVertex3f(100.f, -2.f, -100.f);
         glTexCoord2f(0, nbRep);
         glVertex3f(-100.f, -2.f, -100.f);
-    glEnd();
+    glEnd();*/
 
     if (m_testChunk.IsDirty())
         m_testChunk.Update(this);
