@@ -3,16 +3,16 @@
 
 KRYO_BEGIN_NAMESPACE
 
-TextureAtlas::TextureAtlas(unsigned int nbTexture) : m_isValid(false), m_currentTextureIndex(0)
+TextureAtlas::TextureAtlas(unsigned int nbTexture) : m_currentTextureIndex(0), m_isValid(false)
 {
     if(nbTexture < 4)
         nbTexture = 4;
 
     // Arrondir sur la puissance de 2 superieure
     m_nbTexturePerSide = (int)sqrt((float)nbTexture);
-    if(m_nbTexturePerSide * m_nbTexturePerSide < nbTexture)
+    if (m_nbTexturePerSide * m_nbTexturePerSide < nbTexture)
         m_nbTexturePerSide++;
-    while(!IsPowerOfTwo(m_nbTexturePerSide))
+    while (!IsPowerOfTwo(m_nbTexturePerSide))
         m_nbTexturePerSide++;
 }
 
@@ -21,7 +21,6 @@ TextureAtlas::~TextureAtlas()
     if(IsValid())
         glDeleteTextures(1, &m_textureId);
 }
-
 
 TextureAtlas::TextureIndex TextureAtlas::AddTexture(const std::string& fname)
 {

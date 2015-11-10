@@ -5,7 +5,7 @@ KRYO_BEGIN_NAMESPACE
 Engine::Engine()
 Engine::Engine() : m_wireframe(false),
     m_moveForward(false), m_moveBackward(false), m_moveLeft(false), m_moveRight(false)
-    m_blockDefinitions(Array2d<BlockInfo>(4, 4)), m_textureAtlas(4) { }
+    m_blockDefinitions(Array2d<BlockInfo>(TEXTUREATLAS_SIZE, TEXTUREATLAS_SIZE)), m_textureAtlas(BLOCK_TYPE_MAX) { }
 
 Engine::~Engine() { }
 
@@ -14,9 +14,10 @@ void Engine::Init()
     GLenum err = glewInit();
     if (err != GLEW_OK)
     {
-        std::cerr << " Error while initializing GLEW... aborting (" << glewGetErrorString(err) << ") " << std::endl;
+        std::cerr << "Error while initializing GLEW... aborting (" << glewGetErrorString(err) << ")" << std::endl;
         abort();
     }
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_TEXTURE_2D);
     glMatrixMode(GL_PROJECTION);
