@@ -129,7 +129,7 @@ void Chunk::Update(Engine* engine)
     // Update mesh
     if (m_isDirty)
     {
-        int maxVertexCount = (CHUNK_SIZE_WIDTH * CHUNK_SIZE_HEIGHT * CHUNK_SIZE_DEPTH) * (6 * 4);
+        int maxVertexCount = KRYO_CHUNK_SIZE * (6 * 4);
         ChunkMesh::VertexData* vd = new ChunkMesh::VertexData[maxVertexCount];
         int count = 0;
         for (int x = 0; x < CHUNK_SIZE_WIDTH; ++x)

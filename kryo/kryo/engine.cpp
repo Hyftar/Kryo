@@ -17,6 +17,7 @@ void Engine::Init()
         std::cerr << " Error while initializing GLEW... aborting (" << glewGetErrorString(err) << ") " << std::endl;
         abort();
     }
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glEnable(GL_TEXTURE_2D);
     glMatrixMode(GL_PROJECTION);
