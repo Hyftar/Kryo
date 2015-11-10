@@ -14,7 +14,7 @@ Player::~Player() { }
 // TODO: Ajouter une variable sensibilité plutôt que l'approche ci-dessous.
 void Player::TurnLeftRight(float value)
 {
-    m_rotY += value * 0.01;
+    m_rotY += value * CAMERA_SENSITIVITY;
     if (m_rotY > 360)
         m_rotY -= 360;
 }
@@ -22,7 +22,8 @@ void Player::TurnLeftRight(float value)
 // TODO: Ajouter une variable sensibilité plutôt que l'approche ci-dessous.
 void Player::TurnTopBottom(float value)
 {
-    m_rotX += value * 0.01;
+    auto rotVal = value * CAMERA_SENSITIVITY;
+    m_rotX = ((m_rotX + rotVal) <= -85) ? -85 : ((m_rotX + rotVal) >= 85 ? 85 : (m_rotX + rotVal));
     if (m_rotX > 360)
         m_rotX -= 360;
 }

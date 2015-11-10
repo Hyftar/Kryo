@@ -32,6 +32,9 @@ public:
 
     void SetFreecam(bool freecam);
     bool IsFreecam() const;
+    Array2d<BlockInfo> &GetBlockDefinitions() { return m_blockDefinitions; }
+    const Array2d<BlockInfo> &GetBlockDefinitions() const { return m_blockDefinitions; }
+
 private:
     bool LoadTexture(Texture& texture, const std::string& filename, bool stopOnError = true);
     void DrawCube(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
