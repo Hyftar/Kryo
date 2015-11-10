@@ -20,21 +20,25 @@ public:
     };
 
     BlockInfo();
-    BlockInfo(BlockType type, const std::string& name, BlockUV uvmap);
+    BlockInfo(BlockType type, const std::string& name, BlockUV uvmap, const bool solid);
     ~BlockInfo();
     BlockType GetType() const;
     int GetDurability() const;
     void SetDurability(int durability);
     void Afficher() const;
     BlockUV GetUVMap() const;
+    bool IsSolid() const;
 
 private:
+    BlockUV m_uvmap;
     BlockType m_type;
     std::string m_name;
+    float WalkingSpeed;
     int m_durability;
-    BlockUV m_uvmap;
+    bool m_solid;
 };
 
 KRYO_END_NAMESPACE
 
 #endif
+

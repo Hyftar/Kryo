@@ -22,7 +22,7 @@ Chunk::~Chunk() { }
 void Chunk::PopulateArrayTest()
 {
     m_blocks.Reset(BTYPE_AIR);
-    for (int x = 0; x < CHUNK_SIZE_WIDTH; ++x)
+    /*for (int x = 0; x < CHUNK_SIZE_WIDTH; ++x)
     {
         for (int z = 0; z < CHUNK_SIZE_DEPTH; ++z)
         {
@@ -32,7 +32,13 @@ void Chunk::PopulateArrayTest()
                     m_blocks.Set(x, y, z, BTYPE_GRASS);
             }
         }
+    }*/
+
+    for (size_t i = 0; i < 5; ++i)
+    {
+        m_blocks.Set(i + 1, 0, i + 1, BTYPE_GRASS);
     }
+
     m_isDirty = true;
 }
 
@@ -54,7 +60,7 @@ void Chunk::Set(int idx, BlockType type)
 
 void Chunk::Set(int x, int y, int z, BlockType type)
 {
-    Set(KRYO_COORDINATES_IDX(x, y,z), type);
+    Set(KRYO_COORDINATES_IDX(x, y, z), type);
 }
 
 void Chunk::Render() const

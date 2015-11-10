@@ -16,6 +16,7 @@ public:
     T Length() const;
     T Dot(const Vector3<T>& v) const;
 
+    void Truncate();
     void Normalize();
     void Zero();
 
@@ -47,6 +48,7 @@ public:
 
     bool operator==(const Vector3<T>& v) const;
     bool operator!=(const Vector3<T>& v) const;
+
 public:
     T x, y, z;
 };

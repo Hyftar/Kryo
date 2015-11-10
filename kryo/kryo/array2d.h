@@ -7,7 +7,7 @@
 KRYO_BEGIN_NAMESPACE
 
 #define KRYO_BLOCKARRAY2D_SIZE (m_width * m_height)
-#define KRYO_COORDINATES_IDX(x, y) (x + (y * m_height))
+#define KRYO_COORDINATES_IDX(x, y) (x + (y * m_width))
 
 template <class T>
 class Array2d

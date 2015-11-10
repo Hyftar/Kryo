@@ -70,7 +70,7 @@ void Engine::AddBlockDefinition(const BlockType bt, const std::string& name,
     m_textureAtlas.TextureIndexToCoord(topIndex, m->tu, m->tv, m->tw, m->th);
     m_textureAtlas.TextureIndexToCoord(bottomIndex, m->bu, m->bv, m->bw, m->bh);
 
-    m_blockDefinitions.Set(bt, BlockInfo(bt, name, *m));
+    m_blockDefinitions.Set(bt, BlockInfo(bt, name, *m, true));
 }
 
 void Engine::AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& path)
@@ -128,7 +128,13 @@ void Engine::Render(float elapsedTime)
     // Transformations initiales
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    m_player.Move(m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, elapsedTime);
+
+    /*m_player.Move(m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, elapsedTime);*/
+    Vector3f dPosition;
+
+    dPosition = m_player.SimulateMove(m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, elapsedTime);
+    CheckCollisions(m_player, dPosition);
+
     if (m_freeCam)
         m_player.MoveFreecam(m_moveUp, m_moveDown, elapsedTime);
 
@@ -139,7 +145,7 @@ void Engine::Render(float elapsedTime)
 
     // Plancher
     // Les vertex doivent etre affiches dans le sens anti-horaire (CCW)
-    /*float nbRep = 50.f;
+    float nbRep = 50.f;
     glBegin(GL_QUADS);
         glNormal3f(0, 1, 0); // Normal vector
         glTexCoord2f(0, 0);
@@ -150,7 +156,7 @@ void Engine::Render(float elapsedTime)
         glVertex3f(100.f, -2.f, -100.f);
         glTexCoord2f(0, nbRep);
         glVertex3f(-100.f, -2.f, -100.f);
-    glEnd();*/
+    glEnd();
 
     if (m_testChunk.IsDirty())
         m_testChunk.Update(this);
@@ -250,16 +256,121 @@ void Engine::MouseMoveEvent(int x, int y)
         m_player.TurnTopBottom(y);
 }
 
-void Engine::MousePressEvent(const MOUSE_BUTTON &button, int x, int y)
+void Engine::MousePressEvent(const MOUSE_BUTTON& button, int x, int y)
 {
 }
 
-void Engine::MouseReleaseEvent(const MOUSE_BUTTON &button, int x, int y)
+void Engine::MouseReleaseEvent(const MOUSE_BUTTON& button, int x, int y)
 {
 }
 
 void Engine::SetFreecam(bool freecam) { m_freeCam = freecam; }
 bool Engine::IsFreecam() const { return m_freeCam; }
+
+void Engine::DrawHud() const
+{
+}
+
+void Engine::CheckCollisions(Player& player, Vector3f movement)
+{
+    Vector3f playerPos = player.GetPosition();
+    Vector3f finalPos = player.GetPosition();
+    Vector3f expectedPosition = playerPos + movement;
+    float newPosX = playerPos.x + movement.x,
+          newPosY = playerPos.y + movement.y,
+          newPosZ = playerPos.z + movement.z;
+
+    //nearestBlockX.Truncate();
+    if (m_testChunk.Get(newPosX + 0.25f, newPosY, newPosZ) != BTYPE_AIR ||
+        m_testChunk.Get(newPosX - 0.25f, newPosY, newPosZ) != BTYPE_AIR ||
+        m_testChunk.Get(newPosX, newPosY, newPosZ + 0.25f) != BTYPE_AIR ||
+        m_testChunk.Get(newPosX, newPosY, newPosZ - 0.25f) != BTYPE_AIR)
+    {
+        if ((int)newPosX + 0.25f > expectedPosition.x)
+        {
+            finalPos.x = newPosX + 0.25f;
+        }
+        else if ((int)newPosX - 0.25f < expectedPosition.x)
+        {
+            finalPos.x = newPosX - 0.25f;
+        }
+        else
+        {
+            finalPos.x += movement.x;
+        }
+
+        if ((int)newPosZ + 0.25f > expectedPosition.z)
+        {
+            finalPos.z = newPosZ + 0.25f;
+        }
+        else if ((int)newPosZ - 0.25f < expectedPosition.z)
+        {
+            finalPos.z = newPosZ - 0.25f;
+        }
+        else
+        {
+            finalPos.z += movement.z;
+        }
+
+        /*if (nearestBlock.z + 0.75 > expectedPosition.x || nearestBlock.z - 0.75 < expectedPosition.z)
+        {
+            player.collisionZ = true;
+            finalPos = nearestBlock.z + 0.75;
+        }*/
+    }
+    else
+    {
+        finalPos += movement;
+    }
+
+    //int left =   (int)roundf(playerPos.x - 0.25),
+    //    right =  (int)roundf(playerPos.x + 0.25),
+    //    front =  (int)roundf(playerPos.z - 0.25),
+    //    back =   (int)roundf(playerPos.z + 0.25),
+    //    top =    (int)roundf(playerPos.y + 0.25),
+    //    bottom = (int)roundf(playerPos.y - 0.25);
+
+    //Vector3i blockLeftV((int)roundf(playerPos.x - 0.25), (int)roundf(playerPos.y), (int)roundf(playerPos.z)),
+    //         blockRightV((int)roundf(playerPos.x + 0.25), (int)roundf(playerPos.y), (int)roundf(playerPos.z)),
+    //         blockFrontV((int)roundf(playerPos.x), (int)roundf(playerPos.y), (int)roundf(playerPos.z - 0.25)),
+    //         blockBackV((int)roundf(playerPos.x), (int)roundf(playerPos.y), (int)roundf(playerPos.z + 0.25));
+
+    //if (m_testChunk.Get((int)roundf(playerPos.x + movement.x), (int)roundf(playerPos.y), (int)roundf(playerPos.z)) != BTYPE_AIR)
+    //{
+    //    player.collisionX = true;
+    //    finalPos.x += roundf(movement.x);
+    //}
+    //else
+    //{
+    //    player.collisionX = false;
+    //    finalPos.x += movement.x;
+    //}
+
+    //if (m_testChunk.Get((int)playerPos.x, (int)(playerPos.y + movement.y), (int)playerPos.z) != BTYPE_AIR)
+    //{
+    //    player.collisionY = true;
+    //    playerPos.y += roundf(movement.y) - 0.1;
+    //}
+    //else
+    //{
+    //    player.collisionY = false;
+    //    playerPos.y += movement.y;
+    //}
+
+    //if (m_testChunk.Get((int)roundf(playerPos.x), (int)roundf(playerPos.y), (int)(roundf(playerPos.z + movement.z + 0.25))) != BTYPE_AIR)
+    //{
+    //    player.collisionZ = true;
+    //    finalPos.z += roundf(movement.z);
+    //    std::cout << playerPos << std::endl;
+    //}
+    //else
+    //{
+    //    player.collisionZ = false;
+    //    finalPos.z += movement.z;
+    //}
+    std::cout << movement << std::endl;
+    player.SetPosition(finalPos);
+}
 
 bool Engine::LoadTexture(Texture& texture, const std::string& filename, bool stopOnError)
 {

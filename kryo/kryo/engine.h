@@ -36,7 +36,8 @@ public:
     const Array2d<BlockInfo> &GetBlockDefinitions() const { return m_blockDefinitions; }
 
 private:
-    bool LoadTexture(Texture& texture, const std::string& filename, bool stopOnError = true);
+    void DrawHud() const;
+    void CheckCollisions(Player& player, Vector3f movement);
     void DrawCube(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
     void DrawHexagon(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
     void AddBlockDefinition(const BlockType bt, const std::string& name,
@@ -47,6 +48,7 @@ private:
     void AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& path);
     void AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& topPath, const std::string& sidePath);
     void AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& topPath, const std::string& frontPath, const std::string& sidePath);
+    bool LoadTexture(Texture& texture, const std::string& filename, bool stopOnError = true);
 private:
     bool m_wireframe;
     bool m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, m_moveUp, m_moveDown;

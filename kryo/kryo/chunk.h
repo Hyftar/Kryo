@@ -15,12 +15,12 @@ class Chunk
 {
 public:
     Chunk(int x = CHUNK_SIZE_WIDTH, int y = CHUNK_SIZE_HEIGHT, int z = CHUNK_SIZE_DEPTH);
-    Chunk(Chunk &source);
+    Chunk(Chunk& source);
     ~Chunk();
     int GetBlockCount() const;
     void Remove(int idx);
     void Remove(int x, int y, int z);
-    void Set(int idx, BlockType Type);
+    void Set(int idx, BlockType type);
     void Set(int x, int y, int z, BlockType type);
     void Reset(BlockType type = BTYPE_AIR);
     void Update(Engine* engine);
