@@ -1,3 +1,4 @@
+#include "define.h"
 #include "player.h"
 
 KRYO_BEGIN_NAMESPACE

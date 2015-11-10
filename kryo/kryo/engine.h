@@ -2,11 +2,15 @@
 #define KRYO_ENGINE_H
 
 #include "global.h"
+#include "define.h"
 #include "player.h"
 #include "chunk.h"
 #include "texture.h"
 #include "shader.h"
 #include "openglcontext.h"
+#include "blockinfo.h"
+#include "textureatlas.h"
+#include "array2d.h"
 
 KRYO_BEGIN_NAMESPACE
 
@@ -30,17 +34,23 @@ private:
     bool LoadTexture(Texture& texture, const std::string& filename, bool stopOnError = true);
     void DrawCube(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
     void DrawHexagon(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
+    void AddBlockDefinition(const BlockType bt, const std::string& name,
+        const std::string& frontPath, const std::string& backPath,
+        const std::string& rightPath, const std::string& leftPath,
+        const std::string& topPath,   const std::string& bottomPath);
 
+    void AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& path);
+    void AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& topPath, const std::string& sidePath);
+    void AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& topPath, const std::string& frontPath, const std::string& sidePath);
 private:
     bool m_wireframe;
     bool m_moveForward, m_moveBackward, m_moveLeft, m_moveRight;
 
     Player m_player;
     Chunk m_testChunk;
+    Array2d<BlockInfo> m_blockDefinitions;
 
-    Texture m_textureFloor;
-    Texture m_textureCube;
-
+    TextureAtlas m_textureAtlas;
     Shader m_shader01;
 };
 

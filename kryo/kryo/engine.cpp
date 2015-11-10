@@ -3,7 +3,9 @@
 KRYO_BEGIN_NAMESPACE
 
 Engine::Engine()
-    : m_wireframe(false), m_moveForward(false), m_moveBackward(false), m_moveLeft(false), m_moveRight(false) { }
+Engine::Engine() : m_wireframe(false),
+    m_moveForward(false), m_moveBackward(false), m_moveLeft(false), m_moveRight(false)
+    m_blockDefinitions(Array2d<BlockInfo>(4, 4)), m_textureAtlas(4) { }
 
 Engine::~Engine() { }
 
@@ -47,14 +49,67 @@ void Engine::DeInit()
 {
 }
 
+void Engine::AddBlockDefinition(const BlockType bt, const std::string& name,
+    const std::string& frontPath, const std::string& backPath,
+    const std::string& rightPath, const std::string& leftPath,
+    const std::string& topPath,   const std::string& bottomPath)
+{
+    TextureAtlas::TextureIndex
+        frontIndex = m_textureAtlas.AddTexture(frontPath),
+        backIndex = m_textureAtlas.AddTexture(backPath),
+        rightIndex = m_textureAtlas.AddTexture(rightPath),
+        leftIndex = m_textureAtlas.AddTexture(leftPath),
+        topIndex = m_textureAtlas.AddTexture(topPath),
+        bottomIndex = m_textureAtlas.AddTexture(bottomPath);
+
+    BlockInfo::BlockUV* m = new BlockInfo::BlockUV();
+    m_textureAtlas.TextureIndexToCoord(frontIndex, m->fu, m->fv, m->fw, m->fh);
+    m_textureAtlas.TextureIndexToCoord(backIndex, m->du, m->dv, m->dw, m->dh);
+    m_textureAtlas.TextureIndexToCoord(rightIndex, m->ru, m->rv, m->rw, m->rh);
+    m_textureAtlas.TextureIndexToCoord(leftIndex, m->lu, m->lv, m->lw, m->lh);
+    m_textureAtlas.TextureIndexToCoord(topIndex, m->tu, m->tv, m->tw, m->th);
+    m_textureAtlas.TextureIndexToCoord(bottomIndex, m->bu, m->bv, m->bw, m->bh);
+
+    m_blockDefinitions.Set(bt, BlockInfo(bt, name, *m));
+}
+
+void Engine::AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& path)
+{
+    return AddBlockDefinition(bt, name, path, path, path, path, path, path);
+}
+
+void Engine::AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& topPath, const std::string& sidePath)
+{
+    return AddBlockDefinition(bt, name, sidePath, sidePath, sidePath, sidePath, topPath, sidePath);
+}
+
+void Engine::AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& topPath, const std::string& frontPath, const std::string& sidePath)
+{
+    return AddBlockDefinition(bt, name, frontPath, sidePath, sidePath, sidePath, topPath, sidePath);
+}
+
 void Engine::LoadResource()
 {
-    LoadTexture(m_textureFloor, TEXTURE_PATH "checker.bmp");
-    LoadTexture(m_textureCube, TEXTURE_PATH "tile.jpg");
-    std::cout << " Loading and compiling shaders ..." << std::endl;
+    //TextureAtlas::TextureIndex texCheckerIndex = m_textureAtlas.AddTexture(TEXTURE_PATH "checker.bmp");
+    AddBlockDefinition(BTYPE_DIRT, "Dirt", TEXTURE_PATH "dirt.png");
+    AddBlockDefinition(BTYPE_GRASS, "Grass",
+        TEXTURE_PATH "grass_side.png",
+        TEXTURE_PATH "grass_side.png",
+        TEXTURE_PATH "grass_side.png",
+        TEXTURE_PATH "grass_side.png",
+        TEXTURE_PATH "grass.png",
+        TEXTURE_PATH "dirt.png");
+
+    if (!m_textureAtlas.Generate(128, false))
+    {
+        std::cout << "Unable to generate texture atlas..." << std::endl;
+        abort();
+    }
+
+    std::cout << "Loading and compiling shaders..." << std::endl;
     if (!m_shader01.Load(SHADER_PATH "shader01.vert", SHADER_PATH "shader01.frag", true))
     {
-        std::cout << " Failed to load shader " << std::endl;
+        std::cout << "Failed to load shaders" << std::endl;
         exit(1);
     }
 }
@@ -77,6 +132,8 @@ void Engine::Render(float elapsedTime)
     m_player.ApplyRotation();
     m_player.ApplyTranslation();
 
+    m_textureAtlas.Bind();
+
     // Plancher
     // Les vertex doivent etre affiches dans le sens anti-horaire (CCW)
     m_textureFloor.Bind();
@@ -93,9 +150,8 @@ void Engine::Render(float elapsedTime)
         glVertex3f(-100.f, -2.f, -100.f);
     glEnd();
 
-    m_textureCube.Bind();
     if (m_testChunk.IsDirty())
-        m_testChunk.Update();
+        m_testChunk.Update(this);
 
     m_shader01.Use();
     m_testChunk.Render();
@@ -277,7 +333,7 @@ void Engine::DrawCube(int x, int y, int z, float rotX, float rotY, float rotZ)
             glRotatef(rotY, 0, 1.f, 0);
         if (rotZ != 0)
             glRotatef(rotZ, 0, 0, 1.f);
-        m_textureCube.Bind();
+        m_textureAtlas.Bind();
         glBegin(GL_QUADS);
             // TOP
             glTexCoord2f(0, 0);

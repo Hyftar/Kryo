@@ -5,8 +5,11 @@
 #include "define.h"
 #include "chunkmesh.h"
 #include "array3d.h"
+#include "blockinfo.h"
 
 KRYO_BEGIN_NAMESPACE
+
+class Engine;
 
 class Chunk
 {
@@ -20,7 +23,7 @@ public:
     void Set(int idx, BlockType Type);
     void Set(int x, int y, int z, BlockType type);
     void Reset(BlockType type = BTYPE_AIR);
-    void Update();
+    void Update(Engine* engine);
     void Render() const;
     BlockType Get(int idx) const;
     BlockType Get(int x, int y, int z) const;
@@ -29,7 +32,7 @@ public:
 private:
     void ValidateCoordinates(int idx) const;
     void ValidateCoordinates(int x, int y, int z) const;
-    void AddBlockToMesh(ChunkMesh::VertexData * vd, int & count, BlockType bt, int x, int y, int z);
+    void AddBlockToMesh(ChunkMesh::VertexData* vd, int& count, BlockInfo bi, int x, int y, int z);
     void PopulateArrayTest();
 
 private:
