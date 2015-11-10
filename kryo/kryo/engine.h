@@ -30,6 +30,8 @@ public:
     virtual void MousePressEvent(const MOUSE_BUTTON &button, int x, int y);
     virtual void MouseReleaseEvent(const MOUSE_BUTTON &button, int x, int y);
 
+    void SetFreecam(bool freecam);
+    bool IsFreecam() const;
 private:
     bool LoadTexture(Texture& texture, const std::string& filename, bool stopOnError = true);
     void DrawCube(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
@@ -44,7 +46,8 @@ private:
     void AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& topPath, const std::string& frontPath, const std::string& sidePath);
 private:
     bool m_wireframe;
-    bool m_moveForward, m_moveBackward, m_moveLeft, m_moveRight;
+    bool m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, m_moveUp, m_moveDown;
+    bool m_freeCam;
 
     Player m_player;
     Chunk m_testChunk;

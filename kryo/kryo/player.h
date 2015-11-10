@@ -15,6 +15,7 @@ public:
     void TurnLeftRight(float value);
     void TurnTopBottom(float value);
     void Move(bool front, bool back, bool left, bool right, float elapsedTime);
+    void MoveFreecam(bool up, bool down, float elapsedTime);
     void ApplyRotation() const;
     void ApplyTranslation() const;
     // TODO: renommer par GetPosition()

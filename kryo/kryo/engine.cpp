@@ -2,10 +2,9 @@
 
 KRYO_BEGIN_NAMESPACE
 
-Engine::Engine()
 Engine::Engine() : m_wireframe(false),
-    m_moveForward(false), m_moveBackward(false), m_moveLeft(false), m_moveRight(false)
-    m_blockDefinitions(Array2d<BlockInfo>(4, 4)), m_textureAtlas(4) { }
+    m_moveForward(false), m_moveBackward(false), m_moveLeft(false), m_moveRight(false), m_moveUp(false), m_moveDown(false),
+    m_freeCam(false), m_blockDefinitions(Array2d<BlockInfo>(4, 4)), m_textureAtlas(4) { }
 
 Engine::~Engine() { }
 
@@ -130,6 +129,9 @@ void Engine::Render(float elapsedTime)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     m_player.Move(m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, elapsedTime);
+    if (m_freeCam)
+        m_player.MoveFreecam(m_moveUp, m_moveDown, elapsedTime);
+
     m_player.ApplyRotation();
     m_player.ApplyTranslation();
 
@@ -171,6 +173,9 @@ void Engine::KeyPressEvent(unsigned char key)
     case 94: // F10
         SetFullscreen(!IsFullscreen());
         break;
+    case 87: // F3
+        SetFreecam(!IsFreecam());
+        break;
     case 0: // A
         m_moveLeft = true;
         break;
@@ -182,6 +187,12 @@ void Engine::KeyPressEvent(unsigned char key)
         break;
     case 3: // D
         m_moveRight = true;
+        break;
+    case 16: // Q
+        m_moveDown = true;
+        break;
+    case 4: // E
+        m_moveUp = true;
         break;
     case 24: // Y
         m_wireframe = !m_wireframe;
@@ -207,6 +218,12 @@ void Engine::KeyReleaseEvent(unsigned char key)
         break;
     case 3: // D
         m_moveRight = false;
+        break;
+    case 16: // Q
+        m_moveDown = false;
+        break;
+    case 4: // E
+        m_moveUp = false;
         break;
     }
 }
@@ -241,6 +258,9 @@ void Engine::MousePressEvent(const MOUSE_BUTTON &button, int x, int y)
 void Engine::MouseReleaseEvent(const MOUSE_BUTTON &button, int x, int y)
 {
 }
+
+void Engine::SetFreecam(bool freecam) { m_freeCam = freecam; }
+bool Engine::IsFreecam() const { return m_freeCam; }
 
 bool Engine::LoadTexture(Texture& texture, const std::string& filename, bool stopOnError)
 {
