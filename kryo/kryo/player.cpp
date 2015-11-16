@@ -4,10 +4,10 @@
 KRYO_BEGIN_NAMESPACE
 
 Player::Player(float posX, float posY, float posZ, float rotX, float rotY, Vector3f speed)
-    : m_position(posX, posY, posZ), m_rotX(rotX), m_rotY(rotY), m_speed(speed), collisionX(false), collisionY(false), collisionZ(false), isGrounded(false), m_gravity(true) { }
+    : m_position(posX, posY, posZ), m_rotX(rotX), m_rotY(rotY), m_speed(speed), m_gravity(GRAVACC) { }
 
 Player::Player(Vector3f position, float rotX, float rotY, Vector3f speed)
-    : m_position(position), m_rotX(rotX), m_rotY(rotY), m_speed(speed), collisionX(false), collisionY(false), collisionZ(false), isGrounded(false), m_gravity(true) { }
+    : m_position(position), m_rotX(rotX), m_rotY(rotY), m_speed(speed), m_gravity(GRAVACC) { }
 
 Player::~Player() { }
 
@@ -28,7 +28,7 @@ void Player::TurnTopBottom(float value)
     m_rotX = ((m_rotX + rotVal) <= -85) ? -85 : ((m_rotX + rotVal) >= 85 ? 85 : (m_rotX + rotVal));
 }
 
-Vector3f Player::SimulateMove(bool front, bool back, bool left, bool right, float elapsedTime)
+Vector3f Player::SimulateMove(bool front, bool back, bool left, bool right, bool up, bool down, float elapsedTime)
 {
     #define BLAH_SPEED 2
     float yrotrad;
@@ -63,6 +63,19 @@ Vector3f Player::SimulateMove(bool front, bool back, bool left, bool right, floa
         }
     }
 
+    if (IsFreecam())
+    {
+        if (up ^ down)
+        {
+            dPosition.y += BLAH_SPEED * elapsedTime * (up ? 1 : -1);
+        }
+    }
+    else
+    {
+        m_speed += m_gravity * elapsedTime;
+        dPosition.y = m_speed.y * elapsedTime;
+    }
+
     // Calcul de la vitesse de chute et position en y
     /*if (collisionY)
         m_speed.y = 0;
@@ -82,12 +95,60 @@ void Player::SetPosition(Vector3f pos)
     m_position = pos;
 }
 
-void Player::MoveFreecam(bool up, bool down, float elapsedTime)
+void Player::SetGravity(float v)
 {
-    if (up ^ down)
-    {
-        m_position.y += 2 * elapsedTime * (up ? 1 : -1);
-    }
+    m_gravity = v;
+}
+
+void Player::SetSpeed(Vector3f v)
+{
+    m_speed = v;
+}
+
+Vector3f Player::GetSpeed() const
+{
+    return m_speed;
+}
+
+void Player::SetSpeedX(float v)
+{
+    m_speed.x = v;
+}
+
+void Player::SetSpeedY(float v)
+{
+    m_speed.y = v;
+}
+
+void Player::SetSpeedZ(float v)
+{
+    m_speed.z = v;
+}
+
+float Player::GetSpeedX()
+{
+    return m_speed.x;
+}
+
+float Player::GetSpeedY()
+{
+    return m_speed.y;
+}
+
+float Player::GetSpeedZ()
+{
+    return m_speed.z;
+}
+
+void Player::SetFreecam(bool v)
+{
+    m_freeCam = v;
+    m_speed = 0;
+}
+
+bool Player::IsFreecam() const
+{
+    return m_freeCam;
 }
 
 void Player::ApplyRotation() const

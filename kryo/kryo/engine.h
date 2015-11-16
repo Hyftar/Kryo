@@ -30,8 +30,6 @@ public:
     virtual void MousePressEvent(const MOUSE_BUTTON &button, int x, int y);
     virtual void MouseReleaseEvent(const MOUSE_BUTTON &button, int x, int y);
 
-    void SetFreecam(bool freecam);
-    bool IsFreecam() const;
     Array2d<BlockInfo> &GetBlockDefinitions() { return m_blockDefinitions; }
     const Array2d<BlockInfo> &GetBlockDefinitions() const { return m_blockDefinitions; }
 
@@ -41,7 +39,7 @@ private:
     void DrawHud() const;
     // REMOVE THIS
     BlockType Get_s(int x, int y, int z);
-    void CheckCollisions(Player& player, Vector3f movement, float elapsedTime);
+    void CheckCollisions(Player& player, Vector3f movement);
     void DrawCube(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
     void DrawHexagon(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
     void AddBlockDefinition(const BlockType bt, const std::string& name,
@@ -53,12 +51,11 @@ private:
     void AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& topPath, const std::string& sidePath);
     void AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& topPath, const std::string& frontPath, const std::string& sidePath);
     bool LoadTexture(Texture& texture, const std::string& filename, bool stopOnError = true);
+
 private:
     bool m_wireframe;
     bool m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, m_moveUp, m_moveDown;
-    bool m_freeCam;
 
-    float m_speed;
     Player m_player;
     Chunk m_testChunk;
     Array2d<BlockInfo> m_blockDefinitions;

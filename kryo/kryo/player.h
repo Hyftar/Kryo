@@ -15,23 +15,30 @@ public:
     ~Player();
     void TurnLeftRight(float value);
     void TurnTopBottom(float value);
-    void Move(bool front, bool back, bool left, bool right, float elapsedTime);
-    void MoveFreecam(bool up, bool down, float elapsedTime);
     void ApplyRotation() const;
     void ApplyTranslation();
-    Vector3f SimulateMove(bool front, bool back, bool left, bool right, float elapsedTime);
+    Vector3f SimulateMove(bool front, bool back, bool left, bool right, bool up, bool down, float elapsedTime);
     Vector3f GetPosition() const;
     void SetPosition(Vector3f pos);
-    void SetGravity(bool v);
-public:
-    bool collisionX, collisionY, collisionZ, isGrounded;
+    void SetGravity(float v);
+    void SetSpeed(Vector3f v);
+    Vector3f GetSpeed() const;
+    void SetSpeedX(float v);
+    void SetSpeedY(float v);
+    void SetSpeedZ(float v);
+    float GetSpeedX();
+    float GetSpeedY();
+    float GetSpeedZ();
+    void SetFreecam(bool v);
+    bool IsFreecam() const;
 
 private:
-    Vector3f m_position;
+    bool m_freeCam;
     Vector3f m_speed;
+    Vector3f m_position;
     Vector3f m_chunkPosition;
     float m_rotX, m_rotY;
-    bool m_gravity;
+    float m_gravity;
 };
 
 KRYO_END_NAMESPACE
