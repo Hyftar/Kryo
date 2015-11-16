@@ -36,8 +36,12 @@ public:
     const Array2d<BlockInfo> &GetBlockDefinitions() const { return m_blockDefinitions; }
 
 private:
+    int GetFps() const;
+    void PrintText(unsigned int x, unsigned int y, const std::string & t);
     void DrawHud() const;
-    void CheckCollisions(Player& player, Vector3f movement);
+    // REMOVE THIS
+    BlockType Get_s(int x, int y, int z);
+    void CheckCollisions(Player& player, Vector3f movement, float elapsedTime);
     void DrawCube(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
     void DrawHexagon(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
     void AddBlockDefinition(const BlockType bt, const std::string& name,
@@ -54,10 +58,12 @@ private:
     bool m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, m_moveUp, m_moveDown;
     bool m_freeCam;
 
+    float m_speed;
     Player m_player;
     Chunk m_testChunk;
     Array2d<BlockInfo> m_blockDefinitions;
 
+    Texture m_textureFont, m_textureCrosshair;
     TextureAtlas m_textureAtlas;
     Shader m_shader01;
 };

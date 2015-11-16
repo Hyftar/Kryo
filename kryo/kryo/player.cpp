@@ -30,6 +30,7 @@ void Player::TurnTopBottom(float value)
 
 Vector3f Player::SimulateMove(bool front, bool back, bool left, bool right, float elapsedTime)
 {
+    #define BLAH_SPEED 2
     float yrotrad;
     Vector3f dPosition;
     if (front ^ back)
@@ -37,13 +38,13 @@ Vector3f Player::SimulateMove(bool front, bool back, bool left, bool right, floa
         yrotrad = (m_rotY / 180 * M_PI);
         if (front)
         {
-            dPosition.x += float(sin(yrotrad)) * 2/*Speed*/ * elapsedTime * (collisionX ? 0 : 1);
-            dPosition.z -= float(cos(yrotrad)) * 2 * elapsedTime * (collisionZ ? 0 : 1);
+            dPosition.x += float(sin(yrotrad)) * BLAH_SPEED /*Speed*/ * elapsedTime;
+            dPosition.z -= float(cos(yrotrad)) * BLAH_SPEED  * elapsedTime;
         }
         else
         {
-            dPosition.x -= float(sin(yrotrad)) * 2 * elapsedTime * (collisionX ? 0 : 1);
-            dPosition.z += float(cos(yrotrad)) * 2 * elapsedTime * (collisionZ ? 0 : 1);
+            dPosition.x -= float(sin(yrotrad)) * BLAH_SPEED * elapsedTime;
+            dPosition.z += float(cos(yrotrad)) * BLAH_SPEED * elapsedTime;
         }
     }
 
@@ -52,20 +53,21 @@ Vector3f Player::SimulateMove(bool front, bool back, bool left, bool right, floa
         yrotrad = (m_rotY / 180 * M_PI);
         if (right)
         {
-            dPosition.x += float(cos(yrotrad)) * 2 * elapsedTime * (collisionX ? 0 : 1);
-            dPosition.z += float(sin(yrotrad)) * 2 * elapsedTime * (collisionX ? 0 : 1);
+            dPosition.x += float(cos(yrotrad)) * BLAH_SPEED * elapsedTime;
+            dPosition.z += float(sin(yrotrad)) * BLAH_SPEED * elapsedTime;
         }
         else
         {
-            dPosition.x -= float(cos(yrotrad)) * 2 * elapsedTime * (collisionX ? 0 : 1);
-            dPosition.z -= float(sin(yrotrad)) * 2 * elapsedTime * (collisionZ ? 0 : 1);
+            dPosition.x -= float(cos(yrotrad)) * BLAH_SPEED * elapsedTime;
+            dPosition.z -= float(sin(yrotrad)) * BLAH_SPEED * elapsedTime;
         }
     }
 
     // Calcul de la vitesse de chute et position en y
-    //m_speed *= collisionY ? 0 : 1;
-    //m_speed.y = isGrounded ? 0 : m_speed.y + GRAVACC * elapsedTime;
-    //dPosition.y += m_speed.y * elapsedTime;
+    /*if (collisionY)
+        m_speed.y = 0;
+    m_speed.y = isGrounded ? 0 : m_speed.y + GRAVACC * elapsedTime;
+    dPosition.y += m_speed.y * elapsedTime;*/
 
     return dPosition;
 }

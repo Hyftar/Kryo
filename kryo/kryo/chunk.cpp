@@ -15,28 +15,27 @@ Chunk::Chunk(int x, int y, int z)
 
 Chunk::Chunk(Chunk &source)
     : m_isDirty(false), m_width(source.m_width), m_height(source.m_height),
-      m_depth(source.m_depth), m_blocks(Array3d<BlockType>(source.m_blocks)) { }
+    m_depth(source.m_depth), m_blocks(Array3d<BlockType>(source.m_blocks)) { }
 
 Chunk::~Chunk() { }
 
 void Chunk::PopulateArrayTest()
 {
     m_blocks.Reset(BTYPE_AIR);
-    /*for (int x = 0; x < CHUNK_SIZE_WIDTH; ++x)
+    for (int x = 0; x < CHUNK_SIZE_WIDTH; ++x)
     {
         for (int z = 0; z < CHUNK_SIZE_DEPTH; ++z)
         {
-            for (int y = 0; y < 32; ++y)
+            for (int y = 0; y < 1; ++y)
             {
-                if (x % 2 == 0 && y % 2 == 0 && z % 2 == 0)
-                    m_blocks.Set(x, y, z, BTYPE_GRASS);
+                m_blocks.Set(x, y, z, BTYPE_GRASS);
             }
         }
-    }*/
+    }
 
     for (size_t i = 0; i < 5; ++i)
     {
-        m_blocks.Set(i + 1, 0, i + 1, BTYPE_GRASS);
+        m_blocks.Set(8, 1 + rand() % 4, i + 1, BTYPE_GRASS);
     }
 
     m_isDirty = true;

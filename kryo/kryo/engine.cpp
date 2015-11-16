@@ -2,9 +2,9 @@
 
 KRYO_BEGIN_NAMESPACE
 
-Engine::Engine() : m_wireframe(false),
-    m_moveForward(false), m_moveBackward(false), m_moveLeft(false), m_moveRight(false), m_moveUp(false), m_moveDown(false),
-    m_freeCam(false), m_blockDefinitions(Array2d<BlockInfo>(4, 4)), m_textureAtlas(4) { }
+Engine::Engine() : m_wireframe(false), m_player(8, 100, 3, 90),
+m_moveForward(false), m_moveBackward(false), m_moveLeft(false), m_moveRight(false), m_moveUp(false), m_moveDown(false),
+m_freeCam(false), m_blockDefinitions(Array2d<BlockInfo>(4, 4)), m_textureAtlas(4), m_speed(0) { }
 
 Engine::~Engine() { }
 
@@ -52,7 +52,7 @@ void Engine::DeInit()
 void Engine::AddBlockDefinition(const BlockType bt, const std::string& name,
     const std::string& frontPath, const std::string& backPath,
     const std::string& rightPath, const std::string& leftPath,
-    const std::string& topPath,   const std::string& bottomPath)
+    const std::string& topPath, const std::string& bottomPath)
 {
     TextureAtlas::TextureIndex
         frontIndex = m_textureAtlas.AddTexture(frontPath),
@@ -130,10 +130,8 @@ void Engine::Render(float elapsedTime)
     glLoadIdentity();
 
     /*m_player.Move(m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, elapsedTime);*/
-    Vector3f dPosition;
-
-    dPosition = m_player.SimulateMove(m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, elapsedTime);
-    CheckCollisions(m_player, dPosition);
+    Vector3f dPosition = m_player.SimulateMove(m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, elapsedTime);
+    CheckCollisions(m_player, dPosition, elapsedTime);
 
     if (m_freeCam)
         m_player.MoveFreecam(m_moveUp, m_moveDown, elapsedTime);
@@ -147,15 +145,15 @@ void Engine::Render(float elapsedTime)
     // Les vertex doivent etre affiches dans le sens anti-horaire (CCW)
     float nbRep = 50.f;
     glBegin(GL_QUADS);
-        glNormal3f(0, 1, 0); // Normal vector
-        glTexCoord2f(0, 0);
-        glVertex3f(-100.f, -2.f, 100.f);
-        glTexCoord2f(nbRep, 0);
-        glVertex3f(100.f, -2.f, 100.f);
-        glTexCoord2f(nbRep, nbRep);
-        glVertex3f(100.f, -2.f, -100.f);
-        glTexCoord2f(0, nbRep);
-        glVertex3f(-100.f, -2.f, -100.f);
+    glNormal3f(0, 1, 0); // Normal vector
+    glTexCoord2f(0, 0);
+    glVertex3f(-100.f, -2.f, 100.f);
+    glTexCoord2f(nbRep, 0);
+    glVertex3f(100.f, -2.f, 100.f);
+    glTexCoord2f(nbRep, nbRep);
+    glVertex3f(100.f, -2.f, -100.f);
+    glTexCoord2f(0, nbRep);
+    glVertex3f(-100.f, -2.f, -100.f);
     glEnd();
 
     if (m_testChunk.IsDirty())
@@ -267,109 +265,164 @@ void Engine::MouseReleaseEvent(const MOUSE_BUTTON& button, int x, int y)
 void Engine::SetFreecam(bool freecam) { m_freeCam = freecam; }
 bool Engine::IsFreecam() const { return m_freeCam; }
 
-void Engine::DrawHud() const
+void Engine::PrintText(unsigned int x, unsigned int y, const std::string & t)
 {
+    glLoadIdentity();
+    glTranslated(x, y, 0);
+    for (unsigned int i = 0; i<t.length(); ++i)
+    {
+        float left = (float)((t[i] - 32) % 16) / 16.0f;
+        float top = (float)((t[i] - 32) / 16) / 16.0f;
+        top += 0.5f;
+        glBegin(GL_QUADS);
+            glTexCoord2f(left, 1.0f - top - 0.0625f);
+            glVertex2f(0, 0);
+            glTexCoord2f(left + 0.0625f, 1.0f - top - 0.0625f);
+            glVertex2f(12, 0);
+            glTexCoord2f(left + 0.0625f, 1.0f - top);
+            glVertex2f(12, 12);
+            glTexCoord2f(left, 1.0f - top);
+            glVertex2f(0, 12);
+        glEnd();
+        glTranslated(8, 0, 0);
+    }
 }
 
-void Engine::CheckCollisions(Player& player, Vector3f movement)
+void Engine::DrawHud() const
 {
+    //// Setter le blend function , tout ce qui sera noir sera transparent
+    //glDisable(GL_LIGHTING);
+    //glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    //glEnable(GL_BLEND);
+    //glDisable(GL_DEPTH_TEST);
+    //glMatrixMode(GL_PROJECTION);
+    //glPushMatrix();
+    //    glLoadIdentity();
+    //    glOrtho(0, Width(), 0, Height(), -1, 1);
+    //    glMatrixMode(GL_MODELVIEW);
+    //    glPushMatrix();
+    //        // Bind de la texture pour le font
+    //        m_textureFont.Bind();
+    //        std::ostringstream ss;
+    //        ss << "Fps : " << GetFps();
+    //        PrintText(10, Height() - 25, ss.str());
+    //        ss.str("");
+    //        ss << "Position : " << m_player.GetPosition();
+    //        PrintText(10, 10, ss.str());
+
+    //        // Affichage du crosshair
+    //        m_textureCrosshair.Bind();
+    //        static const int crossSize = 32;
+    //        glLoadIdentity();
+    //        glTranslated(Width() / 2 - crossSize / 2, Height() / 2 - crossSize / 2, 0);
+    //        glBegin(GL_QUADS);
+    //            glTexCoord2f(0, 0);
+    //            glVertex2i(0, 0);
+    //            glTexCoord2f(1, 0);
+    //            glVertex2i(crossSize, 0);
+    //            glTexCoord2f(1, 1);
+    //            glVertex2i(crossSize, crossSize);
+    //            glTexCoord2f(0, 1);
+    //            glVertex2i(0, crossSize);
+    //        glEnd();
+    //        glEnable(GL_LIGHTING);
+    //        glDisable(GL_BLEND);
+    //        glEnable(GL_DEPTH_TEST);
+    //        glMatrixMode(GL_PROJECTION);
+    //    glPopMatrix();
+    //    glMatrixMode(GL_MODELVIEW);
+    //glPopMatrix();
+}
+
+// REMOVE THIS
+BlockType Engine::Get_s(int x, int y, int z)
+{
+    if (x < 0 || x >= CHUNK_SIZE_WIDTH || y < 0 || y >= CHUNK_SIZE_HEIGHT || z < 0 || z >= CHUNK_SIZE_DEPTH)
+        return BTYPE_AIR;
+
+    m_testChunk.Get(x, y, z);
+}
+
+void Engine::CheckCollisions(Player& player, Vector3f movement, float elapsedTime)
+{
+    /*if (movement == Vector3f())
+        return;*/
+
+    //std::cout << "falling" << std::endl;
+    m_speed += GRAVACC * elapsedTime;
+    movement.y = m_speed * elapsedTime;
+
     Vector3f playerPos = player.GetPosition();
-    Vector3f finalPos = player.GetPosition();
-    Vector3f expectedPosition = playerPos + movement;
-    float newPosX = playerPos.x + movement.x,
-          newPosY = playerPos.y + movement.y,
-          newPosZ = playerPos.z + movement.z;
+    Vector3f expectedPos = playerPos + movement;
+    expectedPos.y += m_speed * elapsedTime;
 
-    //nearestBlockX.Truncate();
-    if (m_testChunk.Get(newPosX + 0.25f, newPosY, newPosZ) != BTYPE_AIR ||
-        m_testChunk.Get(newPosX - 0.25f, newPosY, newPosZ) != BTYPE_AIR ||
-        m_testChunk.Get(newPosX, newPosY, newPosZ + 0.25f) != BTYPE_AIR ||
-        m_testChunk.Get(newPosX, newPosY, newPosZ - 0.25f) != BTYPE_AIR)
+    if (roundf(playerPos.y) > 0)
     {
-        if ((int)newPosX + 0.25f > expectedPosition.x)
+        if (m_testChunk.Get(roundf(expectedPos.x + .25f), roundf(playerPos.y), roundf(playerPos.z + .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(expectedPos.x - .25f), roundf(playerPos.y), roundf(playerPos.z - .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(expectedPos.x + .25f), roundf(playerPos.y) - 1, roundf(playerPos.z + .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(expectedPos.x - .25f), roundf(playerPos.y) - 1, roundf(playerPos.z - .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(expectedPos.x - .25f), roundf(playerPos.y), roundf(playerPos.z + .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(expectedPos.x + .25f), roundf(playerPos.y), roundf(playerPos.z - .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(expectedPos.x - .25f), roundf(playerPos.y) - 1, roundf(playerPos.z + .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(expectedPos.x + .25f), roundf(playerPos.y) - 1, roundf(playerPos.z - .25f)) != BTYPE_AIR)
         {
-            finalPos.x = newPosX + 0.25f;
-        }
-        else if ((int)newPosX - 0.25f < expectedPosition.x)
-        {
-            finalPos.x = newPosX - 0.25f;
-        }
-        else
-        {
-            finalPos.x += movement.x;
-        }
-
-        if ((int)newPosZ + 0.25f > expectedPosition.z)
-        {
-            finalPos.z = newPosZ + 0.25f;
-        }
-        else if ((int)newPosZ - 0.25f < expectedPosition.z)
-        {
-            finalPos.z = newPosZ - 0.25f;
-        }
-        else
-        {
-            finalPos.z += movement.z;
+            movement.x = 0;
         }
 
-        /*if (nearestBlock.z + 0.75 > expectedPosition.x || nearestBlock.z - 0.75 < expectedPosition.z)
+        if (m_testChunk.Get(roundf(playerPos.x + .25f), roundf(playerPos.y), roundf(expectedPos.z + .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(playerPos.x - .25f), roundf(playerPos.y), roundf(expectedPos.z - .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(playerPos.x + .25f), roundf(playerPos.y) - 1, roundf(expectedPos.z + .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(playerPos.x - .25f), roundf(playerPos.y) - 1, roundf(expectedPos.z - .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(playerPos.x - .25f), roundf(playerPos.y), roundf(expectedPos.z + .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(playerPos.x + .25f), roundf(playerPos.y), roundf(expectedPos.z - .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(playerPos.x - .25f), roundf(playerPos.y) - 1, roundf(expectedPos.z + .25f)) != BTYPE_AIR ||
+            m_testChunk.Get(roundf(playerPos.x + .25f), roundf(playerPos.y) - 1, roundf(expectedPos.z - .25f)) != BTYPE_AIR)
         {
-            player.collisionZ = true;
-            finalPos = nearestBlock.z + 0.75;
-        }*/
-    }
-    else
-    {
-        finalPos += movement;
+            movement.z = 0;
+        }
     }
 
-    //int left =   (int)roundf(playerPos.x - 0.25),
-    //    right =  (int)roundf(playerPos.x + 0.25),
-    //    front =  (int)roundf(playerPos.z - 0.25),
-    //    back =   (int)roundf(playerPos.z + 0.25),
-    //    top =    (int)roundf(playerPos.y + 0.25),
-    //    bottom = (int)roundf(playerPos.y - 0.25);
+    /*if (fabs(playerPos.y - expectedPos.y) <= FLT_EPSILON)
+        return;*/
 
-    //Vector3i blockLeftV((int)roundf(playerPos.x - 0.25), (int)roundf(playerPos.y), (int)roundf(playerPos.z)),
-    //         blockRightV((int)roundf(playerPos.x + 0.25), (int)roundf(playerPos.y), (int)roundf(playerPos.z)),
-    //         blockFrontV((int)roundf(playerPos.x), (int)roundf(playerPos.y), (int)roundf(playerPos.z - 0.25)),
-    //         blockBackV((int)roundf(playerPos.x), (int)roundf(playerPos.y), (int)roundf(playerPos.z + 0.25));
+    bool positive = playerPos.y <= expectedPos.y;
+    int delta = roundf(abs(playerPos.y - expectedPos.y));
+    std::cout << "-------" << std::endl << "delta: " << (delta) << std::endl;
+    int i = delta;
+    do
+    {
+        std::cout << "positive: " << positive << std::endl;
+        std::cout << "i: " << i << std::endl;
+        std::cout << "delta-i: " << delta - i << std::endl;
 
-    //if (m_testChunk.Get((int)roundf(playerPos.x + movement.x), (int)roundf(playerPos.y), (int)roundf(playerPos.z)) != BTYPE_AIR)
-    //{
-    //    player.collisionX = true;
-    //    finalPos.x += roundf(movement.x);
-    //}
-    //else
-    //{
-    //    player.collisionX = false;
-    //    finalPos.x += movement.x;
-    //}
+        float posY = positive ? roundf(expectedPos.y) + i : roundf(playerPos.y) - (delta - i) - 1.7f;
+        auto btL1 = Get_s(roundf(expectedPos.x - 0.25f), posY, roundf(expectedPos.z));
+        auto btR1 = Get_s(roundf(expectedPos.x + 0.25f), posY, roundf(expectedPos.z));
+        auto btF1 = Get_s(roundf(expectedPos.x), posY, roundf(expectedPos.z - 0.25f));
+        auto btB1 = Get_s(roundf(expectedPos.x), posY, roundf(expectedPos.z + 0.25f));
 
-    //if (m_testChunk.Get((int)playerPos.x, (int)(playerPos.y + movement.y), (int)playerPos.z) != BTYPE_AIR)
-    //{
-    //    player.collisionY = true;
-    //    playerPos.y += roundf(movement.y) - 0.1;
-    //}
-    //else
-    //{
-    //    player.collisionY = false;
-    //    playerPos.y += movement.y;
-    //}
+        auto btL2 = Get_s(roundf(expectedPos.x + 0.25f), posY, roundf(expectedPos.z + 0.25f));
+        auto btR2 = Get_s(roundf(expectedPos.x - 0.25f), posY, roundf(expectedPos.z - 0.25f));
+        auto btF2 = Get_s(roundf(expectedPos.x - 0.25f), posY, roundf(expectedPos.z - 0.25f));
+        auto btB2 = Get_s(roundf(expectedPos.x + 0.25f), posY, roundf(expectedPos.z + 0.25f));
 
-    //if (m_testChunk.Get((int)roundf(playerPos.x), (int)roundf(playerPos.y), (int)(roundf(playerPos.z + movement.z + 0.25))) != BTYPE_AIR)
-    //{
-    //    player.collisionZ = true;
-    //    finalPos.z += roundf(movement.z);
-    //    std::cout << playerPos << std::endl;
-    //}
-    //else
-    //{
-    //    player.collisionZ = false;
-    //    finalPos.z += movement.z;
-    //}
-    std::cout << movement << std::endl;
-    player.SetPosition(finalPos);
+        auto btL3 = Get_s(roundf(expectedPos.x - 0.25f), posY, roundf(expectedPos.z + 0.25f));
+        auto btR3 = Get_s(roundf(expectedPos.x + 0.25f), posY, roundf(expectedPos.z - 0.25f));
+        auto btF3 = Get_s(roundf(expectedPos.x + 0.25f), posY, roundf(expectedPos.z - 0.25f));
+        auto btB3 = Get_s(roundf(expectedPos.x - 0.25f), posY, roundf(expectedPos.z + 0.25f));
+        if (   btL1 != BTYPE_AIR || btR1 != BTYPE_AIR || btF1 != BTYPE_AIR || btB1 != BTYPE_AIR
+            || btL2 != BTYPE_AIR || btR2 != BTYPE_AIR || btF2 != BTYPE_AIR || btB2 != BTYPE_AIR
+            || btL3 != BTYPE_AIR || btR3 != BTYPE_AIR || btF3 != BTYPE_AIR || btB3 != BTYPE_AIR)
+        {
+            std::cout << "It's a hit? " << posY << std::endl;
+            player.SetPosition(Vector3f(playerPos.x + movement.x, posY + 1.75f, playerPos.z + movement.z));
+            m_speed = 0;
+            return;
+        }
+    } while (i--);
+    player.SetPosition(playerPos + movement);
 }
 
 bool Engine::LoadTexture(Texture& texture, const std::string& filename, bool stopOnError)
@@ -390,138 +443,138 @@ bool Engine::LoadTexture(Texture& texture, const std::string& filename, bool sto
 void Engine::DrawHexagon(int x, int y, int z, float rotX, float rotY, float rotZ)
 {
     glPushMatrix();
-        glTranslatef(x, y, z);
-        if (rotX != 0)
-            glRotatef(rotX, 1.f, 0, 0);
-        if (rotY != 0)
-            glRotatef(rotY, 0, 1.f, 0);
-        if (rotZ != 0)
-            glRotatef(rotZ, 0, 0, 1.f);
+    glTranslatef(x, y, z);
+    if (rotX != 0)
+        glRotatef(rotX, 1.f, 0, 0);
+    if (rotY != 0)
+        glRotatef(rotY, 0, 1.f, 0);
+    if (rotZ != 0)
+        glRotatef(rotZ, 0, 0, 1.f);
 
-        // Top of the hexagon
-        glBegin(GL_POLYGON);
-            glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(0, 0.5f, -0.5f);
-            glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(0, 0.5f, 0.5f);
-            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), 0.5f, float(sin(M_PI / 6.f) * 0.5f));
+    // Top of the hexagon
+    glBegin(GL_POLYGON);
+    glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(0, 0.5f, -0.5f);
+    glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(0, 0.5f, 0.5f);
+    glVertex3f(float(cos(M_PI / 6.f) * 0.5f), 0.5f, float(sin(M_PI / 6.f) * 0.5f));
 
-        glEnd();
+    glEnd();
 
-        // Bottom of the hexagon
-        glBegin(GL_POLYGON);
-            glVertex3f(0, -0.5f, 0.5f);
-            glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(0, -0.5f, -0.5f);
-            glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), -0.5f, float(sin(M_PI / 6.f) * 0.5f));
-        glEnd();
+    // Bottom of the hexagon
+    glBegin(GL_POLYGON);
+    glVertex3f(0, -0.5f, 0.5f);
+    glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(0, -0.5f, -0.5f);
+    glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(M_PI / 6.f) * 0.5f), -0.5f, float(sin(M_PI / 6.f) * 0.5f));
+    glEnd();
 
-        // Connections
-        glBegin(GL_QUADS);
-            glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), 0.5f, float(sin(M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), -0.5f, float(sin(M_PI / 6.f) * 0.5f));
+    // Connections
+    glBegin(GL_QUADS);
+    glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(M_PI / 6.f) * 0.5f), 0.5f, float(sin(M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(M_PI / 6.f) * 0.5f), -0.5f, float(sin(M_PI / 6.f) * 0.5f));
 
-            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), -0.5f, float(sin(M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(M_PI / 6.f) * 0.5f), 0.5f, float(sin(M_PI / 6.f) * 0.5f));
-            glVertex3f(0, 0.5f, 0.5f);
-            glVertex3f(0, -0.5f, 0.5f);
+    glVertex3f(float(cos(M_PI / 6.f) * 0.5f), -0.5f, float(sin(M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(M_PI / 6.f) * 0.5f), 0.5f, float(sin(M_PI / 6.f) * 0.5f));
+    glVertex3f(0, 0.5f, 0.5f);
+    glVertex3f(0, -0.5f, 0.5f);
 
-            glVertex3f(0, -0.5f, 0.5f);
-            glVertex3f(0, 0.5f, 0.5f);
-            glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(0, -0.5f, 0.5f);
+    glVertex3f(0, 0.5f, 0.5f);
+    glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
 
-            glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(5.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(5.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
 
-            glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(0, 0.5f, -0.5f);
-            glVertex3f(0, -0.5f, -0.5f);
+    glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(7.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(7.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(0, 0.5f, -0.5f);
+    glVertex3f(0, -0.5f, -0.5f);
 
-            glVertex3f(0, -0.5f, -0.5f);
-            glVertex3f(0, 0.5f, -0.5f);
-            glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
-            glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
-        glEnd();
+    glVertex3f(0, -0.5f, -0.5f);
+    glVertex3f(0, 0.5f, -0.5f);
+    glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), 0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
+    glVertex3f(float(cos(11.f * M_PI / 6.f) * 0.5f), -0.5f, float(sin(11.f * M_PI / 6.f) * 0.5f));
+    glEnd();
     glPopMatrix();
 }
 
 void Engine::DrawCube(int x, int y, int z, float rotX, float rotY, float rotZ)
 {
     glPushMatrix();
-        glTranslatef(x, y, z);
-        if (rotX != 0)
-            glRotatef(rotX, 1.f, 0, 0);
-        if (rotY != 0)
-            glRotatef(rotY, 0, 1.f, 0);
-        if (rotZ != 0)
-            glRotatef(rotZ, 0, 0, 1.f);
-        m_textureAtlas.Bind();
-        glBegin(GL_QUADS);
-            // TOP
-            glTexCoord2f(0, 0);
-            glVertex3f(0.5f, 0.5f, -0.5f);
-            glTexCoord2f(1.f, 0);
-            glVertex3f(-0.5f, 0.5f, -0.5f);
-            glTexCoord2f(1.f, 1.f);
-            glVertex3f(-0.5f, 0.5f, 0.5f);
-            glTexCoord2f(0, 1.f);
-            glVertex3f(0.5f, 0.5f, 0.5f);
+    glTranslatef(x, y, z);
+    if (rotX != 0)
+        glRotatef(rotX, 1.f, 0, 0);
+    if (rotY != 0)
+        glRotatef(rotY, 0, 1.f, 0);
+    if (rotZ != 0)
+        glRotatef(rotZ, 0, 0, 1.f);
+    m_textureAtlas.Bind();
+    glBegin(GL_QUADS);
+    // TOP
+    glTexCoord2f(0, 0);
+    glVertex3f(0.5f, 0.5f, -0.5f);
+    glTexCoord2f(1.f, 0);
+    glVertex3f(-0.5f, 0.5f, -0.5f);
+    glTexCoord2f(1.f, 1.f);
+    glVertex3f(-0.5f, 0.5f, 0.5f);
+    glTexCoord2f(0, 1.f);
+    glVertex3f(0.5f, 0.5f, 0.5f);
 
-            glTexCoord2f(0, 0);
-            glVertex3f(0.5f, 0.5f, -0.5f);
-            glTexCoord2f(1.f, 0);
-            glVertex3f(0.5f, -0.5f, -0.5f);
-            glTexCoord2f(1.f, 1.f);
-            glVertex3f(-0.5f, -0.5f, -0.5f);
-            glTexCoord2f(0, 1.f);
-            glVertex3f(-0.5f, 0.5f, -0.5f);
+    glTexCoord2f(0, 0);
+    glVertex3f(0.5f, 0.5f, -0.5f);
+    glTexCoord2f(1.f, 0);
+    glVertex3f(0.5f, -0.5f, -0.5f);
+    glTexCoord2f(1.f, 1.f);
+    glVertex3f(-0.5f, -0.5f, -0.5f);
+    glTexCoord2f(0, 1.f);
+    glVertex3f(-0.5f, 0.5f, -0.5f);
 
-            glTexCoord2f(0, 0);
-            glVertex3f(-0.5f, 0.5f, 0.5f);
-            glTexCoord2f(1.f, 0);
-            glVertex3f(-0.5f, -0.5f, 0.5f);
-            glTexCoord2f(1.f, 1.f);
-            glVertex3f(0.5f, -0.5f, 0.5f);
-            glTexCoord2f(0, 1.f);
-            glVertex3f(0.5f, 0.5f, 0.5f);
+    glTexCoord2f(0, 0);
+    glVertex3f(-0.5f, 0.5f, 0.5f);
+    glTexCoord2f(1.f, 0);
+    glVertex3f(-0.5f, -0.5f, 0.5f);
+    glTexCoord2f(1.f, 1.f);
+    glVertex3f(0.5f, -0.5f, 0.5f);
+    glTexCoord2f(0, 1.f);
+    glVertex3f(0.5f, 0.5f, 0.5f);
 
-            glTexCoord2f(0, 0);
-            glVertex3f(0.5f, -0.5f, 0.5f);
-            glTexCoord2f(1.f, 0);
-            glVertex3f(0.5f, -0.5f, -0.5f);
-            glTexCoord2f(1.f, 1.f);
-            glVertex3f(0.5f, 0.5f, -0.5f);
-            glTexCoord2f(0, 1.f);
-            glVertex3f(0.5f, 0.5f, 0.5f);
+    glTexCoord2f(0, 0);
+    glVertex3f(0.5f, -0.5f, 0.5f);
+    glTexCoord2f(1.f, 0);
+    glVertex3f(0.5f, -0.5f, -0.5f);
+    glTexCoord2f(1.f, 1.f);
+    glVertex3f(0.5f, 0.5f, -0.5f);
+    glTexCoord2f(0, 1.f);
+    glVertex3f(0.5f, 0.5f, 0.5f);
 
-            glTexCoord2f(0, 0);
-            glVertex3f(-0.5f, 0.5f, 0.5f);
-            glTexCoord2f(1.f, 0);
-            glVertex3f(-0.5f, 0.5f, -0.5f);
-            glTexCoord2f(1.f, 1.f);
-            glVertex3f(-0.5f, -0.5f, -0.5f);
-            glTexCoord2f(0, 1.f);
-            glVertex3f(-0.5f, -0.5f, 0.5f);
+    glTexCoord2f(0, 0);
+    glVertex3f(-0.5f, 0.5f, 0.5f);
+    glTexCoord2f(1.f, 0);
+    glVertex3f(-0.5f, 0.5f, -0.5f);
+    glTexCoord2f(1.f, 1.f);
+    glVertex3f(-0.5f, -0.5f, -0.5f);
+    glTexCoord2f(0, 1.f);
+    glVertex3f(-0.5f, -0.5f, 0.5f);
 
-            // BOTTOM
-            glTexCoord2f(0, 0);
-            glVertex3f(0.5f, -0.5f, 0.5f);
-            glTexCoord2f(1.f, 0);
-            glVertex3f(-0.5f, -0.5f, 0.5f);
-            glTexCoord2f(1.f, 1.f);
-            glVertex3f(-0.5f, -0.5f, -0.5f);
-            glTexCoord2f(0, 1.f);
-            glVertex3f(0.5f, -0.5f, -0.5f);
-        glEnd();
+    // BOTTOM
+    glTexCoord2f(0, 0);
+    glVertex3f(0.5f, -0.5f, 0.5f);
+    glTexCoord2f(1.f, 0);
+    glVertex3f(-0.5f, -0.5f, 0.5f);
+    glTexCoord2f(1.f, 1.f);
+    glVertex3f(-0.5f, -0.5f, -0.5f);
+    glTexCoord2f(0, 1.f);
+    glVertex3f(0.5f, -0.5f, -0.5f);
+    glEnd();
     glPopMatrix();
 }
 
