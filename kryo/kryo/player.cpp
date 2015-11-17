@@ -7,7 +7,7 @@ Player::Player(float posX, float posY, float posZ, float rotX, float rotY, Vecto
     : m_position(posX, posY, posZ), m_rotX(rotX), m_rotY(rotY), m_speed(speed), m_gravity(GRAVACC) { }
 
 Player::Player(Vector3f position, float rotX, float rotY, Vector3f speed)
-    : m_position(position), m_rotX(rotX), m_rotY(rotY), m_speed(speed), m_gravity(GRAVACC) { }
+    : m_speed(speed), m_position(position), m_rotX(rotX), m_rotY(rotY), m_gravity(GRAVACC) { }
 
 Player::~Player() { }
 
@@ -30,7 +30,7 @@ void Player::TurnTopBottom(float value)
 
 Vector3f Player::SimulateMove(bool front, bool back, bool left, bool right, bool up, bool down, float elapsedTime)
 {
-    #define BLAH_SPEED 2
+    #define BLAH_SPEED 2.f
     float yrotrad;
     Vector3f dPosition;
     if (front ^ back)
