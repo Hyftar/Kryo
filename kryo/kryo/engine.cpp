@@ -353,38 +353,43 @@ void Engine::CheckCollisions(Player& player, Vector3f movement)
     #define PLAYER_HEIGHT 1.7f
     #define BLOCK_HEIGHT 1.f
     #define BLOCK_MARGIN .15f
-    #define BLOCK_EPSILON .0001f
+    #define BLOCK_EPSILON 0.7f
 
-    /*auto aposY = playerPos.y;
-    if (m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT + BLOCK_HEIGHT, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT + BLOCK_HEIGHT, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT + BLOCK_HEIGHT, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT + BLOCK_HEIGHT, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR)
+    /*auto aposY = playerPos.y - 1.f;
+    if (m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR)
     {
         movement.x = 0;
     }
 
-    if (m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT + BLOCK_HEIGHT, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT + BLOCK_HEIGHT, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT + BLOCK_HEIGHT, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), int(aposY - PLAYER_HEIGHT) + BLOCK_HEIGHT + BLOCK_HEIGHT, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR)
+    if (m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR)
     {
         movement.z = 0;
     }*/
 
-    if (playerPos != expectedPos)
+    int blockPlayerY = int(playerPos.y);
+    bool positive = blockPlayerY <= expectedPos.y;
+    int diff = blockPlayerY - expectedPos.y;
+    int delta = abs(diff);
+    if (playerPos != expectedPos/* && diff >= 0*/)
     {
-        bool positive = playerPos.y <= expectedPos.y;
-        int delta = roundf(abs(playerPos.y - expectedPos.y));
+        std::cout << playerPos.y << std::endl;
         int i = delta;
+
+        //std::cout << delta << std::endl;
 
         if (delta != 0)
         {
@@ -392,28 +397,27 @@ void Engine::CheckCollisions(Player& player, Vector3f movement)
         }
         do
         {
-            float blockY = positive ? int(playerPos.y + BLOCK_HEIGHT) + i : playerPos.y - (delta - i) - PLAYER_HEIGHT;
-            float posY = positive ? playerPos.y : playerPos.y;
+            float playerY = positive ? playerPos.y + i + 0.3f : blockPlayerY - (delta - i);
+            auto bleh = playerY + BLOCK_HEIGHT;
+            auto blah = floorf(bleh + 0.3f);
+            float blockY = positive ? (int(blah) != int(bleh) ? blah : bleh) : int(playerY - BLOCK_HEIGHT);
 
-            std::cout << blockY << " | " << posY << std::endl;
+            //std::cout << blockY << " | " << posY << std::endl;
 
-            auto btL = Get_s(int(playerPos.x + BLOCK_MARGIN), int(blockY - BLOCK_HEIGHT), int(playerPos.z));
-            auto btR = Get_s(int(playerPos.x - BLOCK_MARGIN), int(blockY - BLOCK_HEIGHT), int(playerPos.z));
-            auto btF = Get_s(int(playerPos.x), int(blockY- BLOCK_HEIGHT), int(playerPos.z + BLOCK_MARGIN));
-            auto btB = Get_s(int(playerPos.x), int(blockY- BLOCK_HEIGHT), int(playerPos.z - BLOCK_MARGIN));
+            auto btL = Get_s(int(playerPos.x + BLOCK_MARGIN), blockY, int(playerPos.z));
+            auto btR = Get_s(int(playerPos.x - BLOCK_MARGIN), blockY, int(playerPos.z));
+            auto btF = Get_s(int(playerPos.x), blockY, int(playerPos.z + BLOCK_MARGIN));
+            auto btB = Get_s(int(playerPos.x), blockY, int(playerPos.z - BLOCK_MARGIN));
 
-            auto btD1 = Get_s(int(playerPos.x - BLOCK_MARGIN), int(blockY), int(playerPos.z - BLOCK_MARGIN));
-            auto btD2 = Get_s(int(playerPos.x - BLOCK_MARGIN), int(blockY), int(playerPos.z + BLOCK_MARGIN));
-            auto btD3 = Get_s(int(playerPos.x + BLOCK_MARGIN), int(blockY), int(playerPos.z - BLOCK_MARGIN));
-            auto btD4 = Get_s(int(playerPos.x + BLOCK_MARGIN), int(blockY), int(playerPos.z + BLOCK_MARGIN));
+            auto btD1 = Get_s(int(playerPos.x - BLOCK_MARGIN), blockY, int(playerPos.z - BLOCK_MARGIN));
+            auto btD2 = Get_s(int(playerPos.x - BLOCK_MARGIN), blockY, int(playerPos.z + BLOCK_MARGIN));
+            auto btD3 = Get_s(int(playerPos.x + BLOCK_MARGIN), blockY, int(playerPos.z - BLOCK_MARGIN));
+            auto btD4 = Get_s(int(playerPos.x + BLOCK_MARGIN), blockY, int(playerPos.z + BLOCK_MARGIN));
 
-            auto diff = floorf(blockY);
-            std::cout << "Diff: " << diff << std::endl;
-            if ((btL != BTYPE_AIR || btR != BTYPE_AIR || btF != BTYPE_AIR || btB != BTYPE_AIR
-                || btD1 != BTYPE_AIR || btD2 != BTYPE_AIR || btD3 != BTYPE_AIR || btD4 != BTYPE_AIR)
-                && (positive ? ((posY - BLOCK_MARGIN) - blockY) < BLOCK_EPSILON : diff < BLOCK_EPSILON))
+            if ((btL != BTYPE_AIR || btR != BTYPE_AIR || btF != BTYPE_AIR || btB != BTYPE_AIR/*
+                || btD1 != BTYPE_AIR || btD2 != BTYPE_AIR || btD3 != BTYPE_AIR || btD4 != BTYPE_AIR*/))
             {
-                float newPos = positive ? posY - BLOCK_MARGIN : floorf(blockY) + BLOCK_HEIGHT + PLAYER_HEIGHT;
+                float newPos = positive ? int(blockY) - BLOCK_HEIGHT - 0.7f : int(playerY);
                 //std::cout << "It's a hit? " << posY << " | " << newPos << std::endl;
                 player.SetPosition(Vector3f(playerPos.x + movement.x, newPos, playerPos.z + movement.z));
                 player.SetSpeedY(0);

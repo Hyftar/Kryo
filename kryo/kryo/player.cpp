@@ -159,7 +159,7 @@ void Player::ApplyRotation() const
 
 void Player::ApplyTranslation()
 {
-    glTranslatef(-m_position.x, -m_position.y, -m_position.z);
+    glTranslatef(-m_position.x, -m_position.y - 1.7f, -m_position.z);
 }
 
 KRYO_END_NAMESPACE
