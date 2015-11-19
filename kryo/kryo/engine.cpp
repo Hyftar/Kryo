@@ -49,12 +49,19 @@ void Engine::Init()
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_CULL_FACE);
 
+    GLfloat fogColor[3] = { 0.8f, 0.8f, 0.8f };
+
+    glEnable(GL_FOG);
+    glFogfv(GL_FOG_COLOR, fogColor);
+    glFogf(GL_FOG_DENSITY, 0.05f);
+
     // Light
     GLfloat light0Pos[4] = { 0.0f, CHUNK_SIZE_HEIGHT, 0.0f, 1.0f };
     GLfloat light0Amb[4] = { 0.9f, 0.9f, 0.9f, 1.0f };
     GLfloat light0Diff[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
     GLfloat light0Spec[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
 
+    glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glLightfv(GL_LIGHT0, GL_POSITION, light0Pos);
     glLightfv(GL_LIGHT0, GL_AMBIENT, light0Amb);
@@ -206,6 +213,10 @@ void Engine::Render(float elapsedTime)
     glEnd();*/
 
     m_shader01.Use();
+
+    GLint fogMode;
+    glGetIntegerv(GL_FOG_MODE, &fogMode);
+    glUniform1i(glGetUniformLocationARB(m_shader01.m_program, "fogMode"), fogMode);
 
     for (int x = 0; x < CHUNK_VIEW_DISTANCE_X; x++)
     {
