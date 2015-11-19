@@ -2,8 +2,13 @@
 
 KRYO_BEGIN_NAMESPACE
 
-Engine::Engine() : m_wireframe(false), m_player(8, 20, 3, 90),
-m_moveForward(false), m_moveBackward(false), m_moveLeft(false), m_moveRight(false), m_moveUp(false), m_moveDown(false), m_blockDefinitions(Array2d<BlockInfo>(4, 4)), m_textureAtlas(4) { }
+Engine::Engine() : m_wireframe(false),
+m_moveForward(false), m_moveBackward(false),
+m_moveLeft(false), m_moveRight(false),
+m_moveUp(false), m_moveDown(false),
+m_player(8, 100.f, 8, 90),
+m_blockDefinitions(Array2d<BlockInfo>(TEXTUREMAP_SIZE, TEXTUREMAP_SIZE)), m_textureAtlas(TEXTUREMAP_SIZE),
+m_fps(0) { }
 
 Engine::~Engine() { }
 
@@ -89,7 +94,9 @@ void Engine::AddBlockDefinition(const BlockType bt, const std::string& name, con
 
 void Engine::LoadResource()
 {
-    //TextureAtlas::TextureIndex texCheckerIndex = m_textureAtlas.AddTexture(TEXTURE_PATH "checker.bmp");
+    m_textureFont.Load(TEXTURE_PATH "font.bmp");
+    m_textureCrosshair.Load(TEXTURE_PATH "cross.bmp");
+
     AddBlockDefinition(BTYPE_DIRT, "Dirt", TEXTURE_PATH "dirt.png");
     AddBlockDefinition(BTYPE_GRASS, "Grass",
         TEXTURE_PATH "grass_side.png",
@@ -120,6 +127,14 @@ void Engine::UnloadResource()
 void Engine::Render(float elapsedTime)
 {
     static float gameTime = elapsedTime;
+    static int fps = 0;
+
+    if (int(gameTime + elapsedTime) >= gameTime)
+    {
+        m_fps = fps;
+        fps = 0;
+    }
+    fps++;
 
     gameTime += elapsedTime;
 
@@ -157,6 +172,8 @@ void Engine::Render(float elapsedTime)
     m_shader01.Use();
     m_testChunk.Render();
     Shader::Disable();
+
+    DrawHud();
 
     //DrawHexagon(0, -1, -7);
 }
@@ -198,7 +215,7 @@ void Engine::KeyPressEvent(unsigned char key)
         break;
     case 57: // Space
         if (!m_player.IsFreecam() && m_player.GetSpeedY() == 0)
-            m_player.SetSpeedY(6.f);
+            m_player.SetSpeedY(5.f);
         break;
     default:
         std::cout << "Unhandled key: " << (int)key << std::endl;
@@ -261,7 +278,12 @@ void Engine::MouseReleaseEvent(const MOUSE_BUTTON& button, int x, int y)
 {
 }
 
-void Engine::PrintText(unsigned int x, unsigned int y, const std::string & t)
+int Engine::GetFps() const
+{
+    return m_fps;
+}
+
+void Engine::PrintText(unsigned int x, unsigned int y, const std::string& t) const
 {
     glLoadIdentity();
     glTranslated(x, y, 0);
@@ -286,49 +308,49 @@ void Engine::PrintText(unsigned int x, unsigned int y, const std::string & t)
 
 void Engine::DrawHud() const
 {
-    //// Setter le blend function , tout ce qui sera noir sera transparent
-    //glDisable(GL_LIGHTING);
-    //glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-    //glEnable(GL_BLEND);
-    //glDisable(GL_DEPTH_TEST);
-    //glMatrixMode(GL_PROJECTION);
-    //glPushMatrix();
-    //    glLoadIdentity();
-    //    glOrtho(0, Width(), 0, Height(), -1, 1);
-    //    glMatrixMode(GL_MODELVIEW);
-    //    glPushMatrix();
-    //        // Bind de la texture pour le font
-    //        m_textureFont.Bind();
-    //        std::ostringstream ss;
-    //        ss << "Fps : " << GetFps();
-    //        PrintText(10, Height() - 25, ss.str());
-    //        ss.str("");
-    //        ss << "Position : " << m_player.GetPosition();
-    //        PrintText(10, 10, ss.str());
+    // Setter le blend function , tout ce qui sera noir sera transparent
+    glDisable(GL_LIGHTING);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glEnable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+        glLoadIdentity();
+        glOrtho(0, Width(), 0, Height(), -1, 1);
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+            // Bind de la texture pour le font
+            m_textureFont.Bind();
+            std::ostringstream ss;
+            ss << "FPS: " << GetFps();
+            PrintText(10, Height() - 25, ss.str());
+            ss.str("");
+            ss << "Position: " << m_player.GetPosition();
+            PrintText(10, 10, ss.str());
 
-    //        // Affichage du crosshair
-    //        m_textureCrosshair.Bind();
-    //        static const int crossSize = 32;
-    //        glLoadIdentity();
-    //        glTranslated(Width() / 2 - crossSize / 2, Height() / 2 - crossSize / 2, 0);
-    //        glBegin(GL_QUADS);
-    //            glTexCoord2f(0, 0);
-    //            glVertex2i(0, 0);
-    //            glTexCoord2f(1, 0);
-    //            glVertex2i(crossSize, 0);
-    //            glTexCoord2f(1, 1);
-    //            glVertex2i(crossSize, crossSize);
-    //            glTexCoord2f(0, 1);
-    //            glVertex2i(0, crossSize);
-    //        glEnd();
-    //        glEnable(GL_LIGHTING);
-    //        glDisable(GL_BLEND);
-    //        glEnable(GL_DEPTH_TEST);
-    //        glMatrixMode(GL_PROJECTION);
-    //    glPopMatrix();
-    //    glMatrixMode(GL_MODELVIEW);
-    //glPopMatrix();
+            // Affichage du crosshair
+            m_textureCrosshair.Bind();
+            static const int crossSize = 32;
+            glLoadIdentity();
+            glTranslated(Width() / 2 - crossSize / 2, Height() / 2 - crossSize / 2, 0);
+            glBegin(GL_QUADS);
+                glTexCoord2f(0, 0);
+                glVertex2i(0, 0);
+                glTexCoord2f(1, 0);
+                glVertex2i(crossSize, 0);
+                glTexCoord2f(1, 1);
+                glVertex2i(crossSize, crossSize);
+                glTexCoord2f(0, 1);
+                glVertex2i(0, crossSize);
+            glEnd();
+            glEnable(GL_LIGHTING);
+            glDisable(GL_BLEND);
+            glEnable(GL_DEPTH_TEST);
+            glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 }
 
 // REMOVE THIS
@@ -342,90 +364,79 @@ BlockType Engine::Get_s(int x, int y, int z)
 
 void Engine::CheckCollisions(Player& player, Vector3f movement)
 {
-    /*if (movement == Vector3f())
-        return;*/
-
-    //std::cout << "falling" << std::endl;
-
     Vector3f playerPos = player.GetPosition();
     Vector3f expectedPos = playerPos + movement;
 
-    #define PLAYER_HEIGHT 1.7f
-    #define BLOCK_HEIGHT 1.f
-    #define BLOCK_MARGIN .15f
-    #define BLOCK_EPSILON 0.7f
+    #define KRYO_HITBOX_COMPARE(x, y) (int(x) != int(y) ? x : y)
 
-    /*auto aposY = playerPos.y - 1.f;
-    if (m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR)
+    auto aposY = playerPos.y;
+    if (m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), aposY, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), aposY, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), aposY, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), aposY, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR)
     {
         movement.x = 0;
     }
+    playerPos.x += movement.x;
 
-    if (m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), aposY + BLOCK_MARGIN + BLOCK_HEIGHT, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR)
+    if (m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), aposY, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), aposY, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), aposY, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), aposY, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x + BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        m_testChunk.Get(int(playerPos.x - BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR)
     {
         movement.z = 0;
-    }*/
-
-    int blockPlayerY = int(playerPos.y);
-    bool positive = blockPlayerY <= expectedPos.y;
-    int diff = blockPlayerY - expectedPos.y;
-    int delta = abs(diff);
-    if (playerPos != expectedPos/* && diff >= 0*/)
-    {
-        std::cout << playerPos.y << std::endl;
-        int i = delta;
-
-        //std::cout << delta << std::endl;
-
-        if (delta != 0)
-        {
-            std::cout << "";
-        }
-        do
-        {
-            float playerY = positive ? playerPos.y + i + 0.3f : blockPlayerY - (delta - i);
-            auto bleh = playerY + BLOCK_HEIGHT;
-            auto blah = floorf(bleh + 0.3f);
-            float blockY = positive ? (int(blah) != int(bleh) ? blah : bleh) : int(playerY - BLOCK_HEIGHT);
-
-            //std::cout << blockY << " | " << posY << std::endl;
-
-            auto btL = Get_s(int(playerPos.x + BLOCK_MARGIN), blockY, int(playerPos.z));
-            auto btR = Get_s(int(playerPos.x - BLOCK_MARGIN), blockY, int(playerPos.z));
-            auto btF = Get_s(int(playerPos.x), blockY, int(playerPos.z + BLOCK_MARGIN));
-            auto btB = Get_s(int(playerPos.x), blockY, int(playerPos.z - BLOCK_MARGIN));
-
-            auto btD1 = Get_s(int(playerPos.x - BLOCK_MARGIN), blockY, int(playerPos.z - BLOCK_MARGIN));
-            auto btD2 = Get_s(int(playerPos.x - BLOCK_MARGIN), blockY, int(playerPos.z + BLOCK_MARGIN));
-            auto btD3 = Get_s(int(playerPos.x + BLOCK_MARGIN), blockY, int(playerPos.z - BLOCK_MARGIN));
-            auto btD4 = Get_s(int(playerPos.x + BLOCK_MARGIN), blockY, int(playerPos.z + BLOCK_MARGIN));
-
-            if ((btL != BTYPE_AIR || btR != BTYPE_AIR || btF != BTYPE_AIR || btB != BTYPE_AIR/*
-                || btD1 != BTYPE_AIR || btD2 != BTYPE_AIR || btD3 != BTYPE_AIR || btD4 != BTYPE_AIR*/))
-            {
-                float newPos = positive ? int(blockY) - BLOCK_HEIGHT - 0.7f : int(playerY);
-                //std::cout << "It's a hit? " << posY << " | " << newPos << std::endl;
-                player.SetPosition(Vector3f(playerPos.x + movement.x, newPos, playerPos.z + movement.z));
-                player.SetSpeedY(0);
-                return;
-            }
-        } while (i--);
     }
-    player.SetPosition(playerPos + movement);
+    playerPos.z += movement.z;
+
+    {
+        int blockPlayerY = int(playerPos.y);
+        bool positive = blockPlayerY <= expectedPos.y;
+        int delta = abs(blockPlayerY - expectedPos.y);
+        if (playerPos != expectedPos && blockPlayerY >= 0)
+        {
+            //std::cout << playerPos.y << std::endl;
+            int i = delta;
+
+            do
+            {
+                float playerY = positive ? playerPos.y + i - CAMERA_OFFSET : blockPlayerY - (delta - i);
+                // TODO: corriger l'implémentation de l'algorithme de vérification de hitbox vers le haut
+                float blockY = positive ? (KRYO_HITBOX_COMPARE(floorf(playerY + BLOCK_HEIGHT - CAMERA_OFFSET), playerY + BLOCK_HEIGHT)) : int(playerY - BLOCK_HEIGHT);
+
+                auto btL = Get_s(int(playerPos.x + BLOCK_MARGIN), blockY, int(playerPos.z));
+                auto btR = Get_s(int(playerPos.x - BLOCK_MARGIN), blockY, int(playerPos.z));
+                auto btF = Get_s(int(playerPos.x), blockY, int(playerPos.z + BLOCK_MARGIN));
+                auto btB = Get_s(int(playerPos.x), blockY, int(playerPos.z - BLOCK_MARGIN));
+
+                auto btD1 = Get_s(int(playerPos.x - BLOCK_MARGIN), blockY, int(playerPos.z - BLOCK_MARGIN));
+                auto btD2 = Get_s(int(playerPos.x - BLOCK_MARGIN), blockY, int(playerPos.z + BLOCK_MARGIN));
+                auto btD3 = Get_s(int(playerPos.x + BLOCK_MARGIN), blockY, int(playerPos.z - BLOCK_MARGIN));
+                auto btD4 = Get_s(int(playerPos.x + BLOCK_MARGIN), blockY, int(playerPos.z + BLOCK_MARGIN));
+
+                if ((btL != BTYPE_AIR || btR != BTYPE_AIR || btF != BTYPE_AIR || btB != BTYPE_AIR
+                    || btD1 != BTYPE_AIR || btD2 != BTYPE_AIR || btD3 != BTYPE_AIR || btD4 != BTYPE_AIR))
+                {
+                    playerPos.y = positive ? blockY - BLOCK_HEIGHT - (BLOCK_HEIGHT + CAMERA_OFFSET) : int(playerY);
+                    player.SetSpeedY(0);
+                    goto endCheckY;
+                }
+            } while (i--);
+            playerPos.y += movement.y;
+        }
+    }
+endCheckY:
+
+    player.SetPosition(playerPos);
+
+    #undef KRYO_HITBOX_COMPARE
 }
 
 bool Engine::LoadTexture(Texture& texture, const std::string& filename, bool stopOnError)

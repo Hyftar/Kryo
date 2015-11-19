@@ -35,7 +35,7 @@ public:
 
 private:
     int GetFps() const;
-    void PrintText(unsigned int x, unsigned int y, const std::string & t);
+    void PrintText(unsigned int x, unsigned int y, const std::string & t) const;
     void DrawHud() const;
     // REMOVE THIS
     BlockType Get_s(int x, int y, int z);
@@ -63,6 +63,7 @@ private:
     Texture m_textureFont, m_textureCrosshair;
     TextureAtlas m_textureAtlas;
     Shader m_shader01;
+    int m_fps;
 };
 
 KRYO_END_NAMESPACE

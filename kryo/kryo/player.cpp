@@ -4,10 +4,10 @@
 KRYO_BEGIN_NAMESPACE
 
 Player::Player(float posX, float posY, float posZ, float rotX, float rotY, Vector3f speed)
-    : m_position(posX, posY, posZ), m_rotX(rotX), m_rotY(rotY), m_speed(speed), m_gravity(GRAVACC) { }
+    : m_freecam(false), m_speed(speed), m_position(posX, posY, posZ), m_rotX(rotX), m_rotY(rotY), m_gravity(GRAVACC) { }
 
 Player::Player(Vector3f position, float rotX, float rotY, Vector3f speed)
-    : m_speed(speed), m_position(position), m_rotX(rotX), m_rotY(rotY), m_gravity(GRAVACC) { }
+    : m_freecam(false), m_speed(speed), m_position(position), m_rotX(rotX), m_rotY(rotY), m_gravity(GRAVACC) { }
 
 Player::~Player() { }
 
@@ -30,7 +30,6 @@ void Player::TurnTopBottom(float value)
 
 Vector3f Player::SimulateMove(bool front, bool back, bool left, bool right, bool up, bool down, float elapsedTime)
 {
-    #define BLAH_SPEED 2.f
     float yrotrad;
     Vector3f dPosition;
     if (front ^ back)
@@ -38,13 +37,13 @@ Vector3f Player::SimulateMove(bool front, bool back, bool left, bool right, bool
         yrotrad = (m_rotY / 180 * M_PI);
         if (front)
         {
-            dPosition.x += float(sin(yrotrad)) * BLAH_SPEED /*Speed*/ * elapsedTime;
-            dPosition.z -= float(cos(yrotrad)) * BLAH_SPEED  * elapsedTime;
+            dPosition.x += float(sin(yrotrad)) * m_speed.x * elapsedTime;
+            dPosition.z -= float(cos(yrotrad)) * m_speed.z * elapsedTime;
         }
         else
         {
-            dPosition.x -= float(sin(yrotrad)) * BLAH_SPEED * elapsedTime;
-            dPosition.z += float(cos(yrotrad)) * BLAH_SPEED * elapsedTime;
+            dPosition.x -= float(sin(yrotrad)) * m_speed.x * elapsedTime;
+            dPosition.z += float(cos(yrotrad)) * m_speed.z * elapsedTime;
         }
     }
 
@@ -53,13 +52,13 @@ Vector3f Player::SimulateMove(bool front, bool back, bool left, bool right, bool
         yrotrad = (m_rotY / 180 * M_PI);
         if (right)
         {
-            dPosition.x += float(cos(yrotrad)) * BLAH_SPEED * elapsedTime;
-            dPosition.z += float(sin(yrotrad)) * BLAH_SPEED * elapsedTime;
+            dPosition.x += float(cos(yrotrad)) * m_speed.x * elapsedTime;
+            dPosition.z += float(sin(yrotrad)) * m_speed.z * elapsedTime;
         }
         else
         {
-            dPosition.x -= float(cos(yrotrad)) * BLAH_SPEED * elapsedTime;
-            dPosition.z -= float(sin(yrotrad)) * BLAH_SPEED * elapsedTime;
+            dPosition.x -= float(cos(yrotrad)) * m_speed.x * elapsedTime;
+            dPosition.z -= float(sin(yrotrad)) * m_speed.z * elapsedTime;
         }
     }
 
@@ -67,7 +66,7 @@ Vector3f Player::SimulateMove(bool front, bool back, bool left, bool right, bool
     {
         if (up ^ down)
         {
-            dPosition.y += BLAH_SPEED * elapsedTime * (up ? 1 : -1);
+            dPosition.y += m_speed.y * elapsedTime * (up ? 1 : -1);
         }
     }
     else
@@ -75,12 +74,6 @@ Vector3f Player::SimulateMove(bool front, bool back, bool left, bool right, bool
         m_speed += m_gravity * elapsedTime;
         dPosition.y = m_speed.y * elapsedTime;
     }
-
-    // Calcul de la vitesse de chute et position en y
-    /*if (collisionY)
-        m_speed.y = 0;
-    m_speed.y = isGrounded ? 0 : m_speed.y + GRAVACC * elapsedTime;
-    dPosition.y += m_speed.y * elapsedTime;*/
 
     return dPosition;
 }
@@ -142,13 +135,13 @@ float Player::GetSpeedZ()
 
 void Player::SetFreecam(bool v)
 {
-    m_freeCam = v;
+    m_freecam = v;
     m_speed = 0;
 }
 
 bool Player::IsFreecam() const
 {
-    return m_freeCam;
+    return m_freecam;
 }
 
 void Player::ApplyRotation() const
@@ -159,7 +152,7 @@ void Player::ApplyRotation() const
 
 void Player::ApplyTranslation()
 {
-    glTranslatef(-m_position.x, -m_position.y - 1.7f, -m_position.z);
+    glTranslatef(-m_position.x, -m_position.y - PLAYER_HEIGHT, -m_position.z);
 }
 
 KRYO_END_NAMESPACE

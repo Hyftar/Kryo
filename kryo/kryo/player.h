@@ -33,7 +33,7 @@ public:
     bool IsFreecam() const;
 
 private:
-    bool m_freeCam;
+    bool m_freecam;
     Vector3f m_speed;
     Vector3f m_position;
     Vector3f m_chunkPosition;
