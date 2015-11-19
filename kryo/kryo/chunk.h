@@ -6,18 +6,20 @@
 #include "chunkmesh.h"
 #include "array3d.h"
 #include "blockinfo.h"
+#include "array2d.h"
+#include "chunkbuffer.h"
 
 KRYO_BEGIN_NAMESPACE
 
+class ChunkBuffer;
 class Engine;
 
 class Chunk
 {
 public:
-    Chunk(int x = CHUNK_SIZE_WIDTH, int y = CHUNK_SIZE_HEIGHT, int z = CHUNK_SIZE_DEPTH);
-    Chunk(Chunk &source);
+    Chunk(Engine* engine);
+    Chunk(Chunk& source);
     ~Chunk();
-    int GetBlockCount() const;
     void Remove(int idx);
     void Remove(int x, int y, int z);
     void Set(int idx, BlockType Type);
@@ -30,16 +32,15 @@ public:
     bool IsDirty() const;
 
 private:
-    void ValidateCoordinates(int idx) const;
-    void ValidateCoordinates(int x, int y, int z) const;
     void AddBlockToMesh(ChunkMesh::VertexData* vd, int& count, BlockInfo bi, int x, int y, int z);
     void PopulateArrayTest();
 
 private:
+    Engine* m_engine;
     bool m_isDirty;
-    int m_width, m_height, m_depth;
     ChunkMesh m_chunkMesh;
     Array3d<BlockType> m_blocks;
+    ChunkBuffer* m_chunks;
 };
 
 KRYO_END_NAMESPACE

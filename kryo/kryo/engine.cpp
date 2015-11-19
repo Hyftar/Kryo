@@ -2,14 +2,33 @@
 
 KRYO_BEGIN_NAMESPACE
 
+#define ENGINE_CHUNK_BUFFER_SIZE_WIDTH (CHUNK_VIEW_DISTANCE_X * 2)
+#define ENGINE_CHUNK_BUFFER_SIZE_HEIGHT (CHUNK_VIEW_DISTANCE_Y * 2)
+
 Engine::Engine() : m_wireframe(false),
     m_moveForward(false), m_moveBackward(false), m_moveLeft(false), m_moveRight(false), m_moveUp(false), m_moveDown(false),
-    m_freeCam(false), m_blockDefinitions(Array2d<BlockInfo>(TEXTUREATLAS_SIZE, TEXTUREATLAS_SIZE)), m_textureAtlas(BLOCK_TYPE_MAX) { }
+    m_freeCam(false), m_player(0, 33.2f, 0), m_chunks(CHUNK_VIEW_DISTANCE_X, CHUNK_VIEW_DISTANCE_Y, ENGINE_CHUNK_BUFFER_SIZE_WIDTH, ENGINE_CHUNK_BUFFER_SIZE_HEIGHT),
+    m_blockDefinitions(TEXTUREATLAS_SIZE, TEXTUREATLAS_SIZE), m_textureAtlas(BLOCK_TYPE_MAX) { }
 
 Engine::~Engine() { }
 
+void Engine::LoadChunks()
+{
+    Chunk*** chunks = new Chunk**[ENGINE_CHUNK_BUFFER_SIZE_WIDTH];
+    for (int x = 0; x < ENGINE_CHUNK_BUFFER_SIZE_WIDTH; x++)
+    {
+        chunks[x] = new Chunk*[ENGINE_CHUNK_BUFFER_SIZE_HEIGHT];
+        for (int y = 0; y < ENGINE_CHUNK_BUFFER_SIZE_HEIGHT; y++)
+        {
+            chunks[x][y] = new Chunk(this);
+        }
+    }
+    m_chunks.LoadChunks(chunks);
+}
+
 void Engine::Init()
 {
+    LoadChunks();
     GLenum err = glewInit();
     if (err != GLEW_OK)
     {
@@ -70,7 +89,7 @@ void Engine::AddBlockDefinition(const BlockType bt, const std::string& name,
     m_textureAtlas.TextureIndexToCoord(topIndex, m->tu, m->tv, m->tw, m->th);
     m_textureAtlas.TextureIndexToCoord(bottomIndex, m->bu, m->bv, m->bw, m->bh);
 
-    m_blockDefinitions.Set(bt, BlockInfo(bt, name, *m));
+    m_blockDefinitions.Set(bt, new BlockInfo(bt, name, *m));
 }
 
 void Engine::AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& path)
@@ -152,11 +171,22 @@ void Engine::Render(float elapsedTime)
         glVertex3f(-100.f, -2.f, -100.f);
     glEnd();*/
 
-    if (m_testChunk.IsDirty())
-        m_testChunk.Update(this);
-
     m_shader01.Use();
-    m_testChunk.Render();
+
+    for (int x = 0; x < CHUNK_VIEW_DISTANCE_X; x++)
+    {
+        for (int y = 0; y < CHUNK_VIEW_DISTANCE_Y; y++)
+        {
+            Chunk* chunk = m_chunks.Get(x, y);
+
+            assert(chunk != nullptr);
+
+            if (chunk->IsDirty())
+                chunk->Update((CHUNK_SIZE_WIDTH * x) - (CHUNK_SIZE_WIDTH * CHUNK_VIEW_DISTANCE_X / 2), (CHUNK_SIZE_DEPTH * y) - (CHUNK_SIZE_DEPTH * CHUNK_VIEW_DISTANCE_Y / 2), x, y);
+            chunk->Render();
+        }
+    }
+
     Shader::Disable();
 
     //DrawHexagon(0, -1, -7);

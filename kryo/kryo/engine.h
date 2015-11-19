@@ -11,6 +11,7 @@
 #include "blockinfo.h"
 #include "textureatlas.h"
 #include "array2d.h"
+#include "chunkbuffer.h"
 
 KRYO_BEGIN_NAMESPACE
 
@@ -34,7 +35,10 @@ public:
     bool IsFreecam() const;
     Array2d<BlockInfo> &GetBlockDefinitions() { return m_blockDefinitions; }
     const Array2d<BlockInfo> &GetBlockDefinitions() const { return m_blockDefinitions; }
+    ChunkBuffer* GetChunkArray() { return &m_chunks; }
+    const ChunkBuffer* GetChunkArray() const { return &m_chunks; }
 
+    void LoadChunks();
 private:
     bool LoadTexture(Texture& texture, const std::string& filename, bool stopOnError = true);
     void DrawCube(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
@@ -43,18 +47,17 @@ private:
         const std::string& frontPath, const std::string& backPath,
         const std::string& rightPath, const std::string& leftPath,
         const std::string& topPath,   const std::string& bottomPath);
-
     void AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& path);
     void AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& topPath, const std::string& sidePath);
     void AddBlockDefinition(const BlockType bt, const std::string& name, const std::string& topPath, const std::string& frontPath, const std::string& sidePath);
+
 private:
     bool m_wireframe;
     bool m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, m_moveUp, m_moveDown;
     bool m_freeCam;
 
     Player m_player;
-    Chunk m_testChunk;
-    Array2d<BlockInfo> m_blockDefinitions;
+    ChunkBuffer m_chunks;
 
     TextureAtlas m_textureAtlas;
     Shader m_shader01;

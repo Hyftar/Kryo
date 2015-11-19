@@ -16,5 +16,7 @@ enum BLOCK_TYPE { BTYPE_AIR, BTYPE_DIRT, BTYPE_GRASS };
 #define TEXTURE_PATH "../kryo/media/textures/"
 #define SHADER_PATH "../kryo/media/shaders/"
 #define VIEW_DISTANCE 128
+#define CHUNK_VIEW_DISTANCE_X 8
+#define CHUNK_VIEW_DISTANCE_Y 8
 
 #endif

@@ -88,6 +88,7 @@
     <ClInclude Include="array3d.h" />
     <ClInclude Include="blockinfo.h" />
     <ClInclude Include="chunk.h" />
+    <ClInclude Include="chunkbuffer.h" />
     <ClInclude Include="chunkmesh.h" />
     <ClInclude Include="define.h" />
     <ClInclude Include="engine.h" />
@@ -105,6 +106,7 @@
   <ItemGroup>
     <ClCompile Include="blockinfo.cpp" />
     <ClCompile Include="chunk.cpp" />
+    <ClCompile Include="chunkbuffer.cpp" />
     <ClCompile Include="chunkmesh.cpp" />
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="main.cpp" />

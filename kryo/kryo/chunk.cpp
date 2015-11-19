@@ -1,35 +1,37 @@
 #include "blockinfo.h"
 #include "chunk.h"
+#include "define.h"
 #include "engine.h"
 
 KRYO_BEGIN_NAMESPACE
 
-#define KRYO_CHUNK_SIZE (m_width * m_height * m_depth)
-#define KRYO_COORDINATES_IDX(x, y, z) (x + (z * m_width) + (y * m_depth * m_width))
-
-Chunk::Chunk(int x, int y, int z)
-    : m_isDirty(false), m_width(x), m_height(y), m_depth(z), m_blocks(x, y, z)
+Chunk::Chunk(Engine* engine)
+    : m_engine(engine), m_isDirty(false), m_blocks(CHUNK_SIZE_WIDTH, CHUNK_SIZE_HEIGHT, CHUNK_SIZE_DEPTH)
 {
+    m_chunks = m_engine->GetChunkArray();
     PopulateArrayTest();
 }
 
 Chunk::Chunk(Chunk &source)
-    : m_isDirty(false), m_width(source.m_width), m_height(source.m_height),
-      m_depth(source.m_depth), m_blocks(Array3d<BlockType>(source.m_blocks)) { }
+    : m_engine(source.m_engine), m_isDirty(false), m_blocks(Array3d<BlockType>(source.m_blocks))
+{
+    m_chunks = m_engine->GetChunkArray();
+}
 
 Chunk::~Chunk() { }
 
 void Chunk::PopulateArrayTest()
 {
     m_blocks.Reset(BTYPE_AIR);
+    if (rand() % 2 == 0)
     for (int x = 0; x < CHUNK_SIZE_WIDTH; ++x)
     {
         for (int z = 0; z < CHUNK_SIZE_DEPTH; ++z)
         {
             for (int y = 0; y < 32; ++y)
             {
-                if (x % 2 == 0 && y % 2 == 0 && z % 2 == 0)
-                    m_blocks.Set(x, y, z, BTYPE_GRASS);
+                //if (x % 2 == 0 && y % 2 == 0 && z % 2 == 0)
+                    m_blocks.Set(x, y, z, y == 31 ? BTYPE_GRASS : BTYPE_DIRT);
             }
         }
     }
@@ -43,7 +45,7 @@ void Chunk::Remove(int idx)
 
 void Chunk::Remove(int x, int y, int z)
 {
-    Set(KRYO_COORDINATES_IDX(x, y, z), BTYPE_AIR);
+    m_blocks.Set(x, y, z, BTYPE_AIR);
 }
 
 void Chunk::Set(int idx, BlockType type)
@@ -54,7 +56,7 @@ void Chunk::Set(int idx, BlockType type)
 
 void Chunk::Set(int x, int y, int z, BlockType type)
 {
-    Set(KRYO_COORDINATES_IDX(x, y,z), type);
+    m_blocks.Set(x, y, z, type);
 }
 
 void Chunk::Render() const
@@ -74,10 +76,10 @@ BlockType Chunk::Get(int idx) const
 
 BlockType Chunk::Get(int x, int y, int z) const
 {
-    return Get(KRYO_COORDINATES_IDX(x, y, z));
+    return m_blocks.Get(x, y, z);
 }
 
-void Chunk::AddBlockToMesh(ChunkMesh::VertexData* vd, int& count, BlockInfo bi, int x, int y, int z)
+void Chunk::AddBlockToMesh(ChunkMesh::VertexData* vd, int& count, BlockInfo* bi, int x, int y, int z)
 {
     BlockInfo::BlockUV m = bi.GetUVMap();
 
@@ -138,12 +140,13 @@ void Chunk::Update(Engine* engine)
             {
                 for (int y = 0; y < CHUNK_SIZE_HEIGHT; ++y)
                 {
-                    if (count > USHRT_MAX)
-                        break;
+                    assert(count <= USHRT_MAX);
+
                     BlockType bt = Get(x, y, z);
-                    BlockInfo bi = engine->GetBlockDefinitions().Get(bt);
+                    BlockInfo* bi = m_engine->GetBlockDefinitions()->Get(bt);
+
                     if (bt != BTYPE_AIR)
-                        AddBlockToMesh(vd, count, bi, x, y, z);
+                        AddBlockToMesh(vd, count, *bi, x, y, z);
                 }
             }
         }
@@ -158,11 +161,6 @@ void Chunk::Update(Engine* engine)
         delete[] vd;
     }
     m_isDirty = false;
-}
-
-int Chunk::GetBlockCount() const
-{
-    return KRYO_CHUNK_SIZE;
 }
 
 #undef KRYO_CHUNK_SIZE
