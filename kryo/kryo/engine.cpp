@@ -40,7 +40,8 @@ void Engine::Init()
     glEnable(GL_TEXTURE_2D);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45.0f, (float)Width() / (float)Height(), 0.1f, 1000.0f);
+    gluPerspective(45.0f, (float)Width() / (float)Height(), 0.1f, 1000.f);
+    glMatrixMode(GL_MODELVIEW);
     glEnable(GL_DEPTH_TEST);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glShadeModel(GL_SMOOTH);
@@ -135,6 +136,30 @@ void Engine::LoadResource()
 
 void Engine::UnloadResource()
 {
+}
+
+BlockType Engine::GetBlock_s(int _chunkX, int _chunkY, int _x, int y, int _z) const
+{
+    if (y < 0 || y >= CHUNK_SIZE_HEIGHT)
+        return BTYPE_AIR;
+
+    int chunkX = _chunkX, chunkY = _chunkY;
+
+    chunkX += floor(_x / float(CHUNK_SIZE_WIDTH));
+    int x = (_x < 0 ? CHUNK_SIZE_WIDTH + _x : _x) % CHUNK_SIZE_WIDTH;
+
+    chunkY += floor(_z / float(CHUNK_SIZE_DEPTH));
+    int z = (_z < 0 ? CHUNK_SIZE_DEPTH + _z : _z) % CHUNK_SIZE_DEPTH;
+
+    if (chunkX < 0 || chunkY < 0 || chunkX >= CHUNK_VIEW_DISTANCE_X || chunkY >= CHUNK_VIEW_DISTANCE_Y)
+        return BTYPE_AIR;
+
+    Chunk* chunk = m_chunks.Get(chunkX, chunkY);
+
+    if (chunk == nullptr)
+        return BTYPE_AIR;
+
+    return chunk->Get(x, y, z);
 }
 
 void Engine::Render(float elapsedTime)

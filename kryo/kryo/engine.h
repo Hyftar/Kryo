@@ -24,6 +24,7 @@ public:
     virtual void DeInit();
     virtual void LoadResource();
     virtual void UnloadResource();
+    BlockType GetBlock_s(int chunkX, int chunkY, int x, int y, int z) const;
     virtual void Render(float elapsedTime);
     virtual void KeyPressEvent(unsigned char key);
     virtual void KeyReleaseEvent(unsigned char key);
@@ -33,8 +34,8 @@ public:
 
     void SetFreecam(bool freecam);
     bool IsFreecam() const;
-    Array2d<BlockInfo> &GetBlockDefinitions() { return m_blockDefinitions; }
-    const Array2d<BlockInfo> &GetBlockDefinitions() const { return m_blockDefinitions; }
+    Array2d<BlockInfo*>* GetBlockDefinitions() { return &m_blockDefinitions; }
+    const Array2d<BlockInfo*>* GetBlockDefinitions() const { return &m_blockDefinitions; }
     ChunkBuffer* GetChunkArray() { return &m_chunks; }
     const ChunkBuffer* GetChunkArray() const { return &m_chunks; }
 
@@ -58,6 +59,7 @@ private:
 
     Player m_player;
     ChunkBuffer m_chunks;
+    Array2d<BlockInfo*> m_blockDefinitions;
 
     TextureAtlas m_textureAtlas;
     Shader m_shader01;
