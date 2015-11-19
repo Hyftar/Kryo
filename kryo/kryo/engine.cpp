@@ -6,7 +6,7 @@ Engine::Engine() : m_wireframe(false),
 m_moveForward(false), m_moveBackward(false),
 m_moveLeft(false), m_moveRight(false),
 m_moveUp(false), m_moveDown(false),
-m_player(8, 100.f, 8, 90),
+m_player(8, 100.f, 8, 90, 0, Vector3f(PLAYER_SPEED, 0.f, PLAYER_SPEED)),
 m_blockDefinitions(Array2d<BlockInfo>(TEXTUREMAP_SIZE, TEXTUREMAP_SIZE)), m_textureAtlas(TEXTUREMAP_SIZE),
 m_fps(0) { }
 
@@ -25,7 +25,7 @@ void Engine::Init()
     glEnable(GL_TEXTURE_2D);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45.0f, (float)Width() / (float)Height(), 0.1f, 1000.0f);
+    gluPerspective(45.0f, (float)Width() / (float)Height(), 0.001f, 1000.0f);
     glEnable(GL_DEPTH_TEST);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glShadeModel(GL_SMOOTH);
@@ -367,8 +367,6 @@ void Engine::CheckCollisions(Player& player, Vector3f movement)
     Vector3f playerPos = player.GetPosition();
     Vector3f expectedPos = playerPos + movement;
 
-    #define KRYO_HITBOX_COMPARE(x, y) (int(x) != int(y) ? x : y)
-
     auto aposY = playerPos.y;
     if (m_testChunk.Get(int(expectedPos.x - BLOCK_MARGIN), aposY, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
         m_testChunk.Get(int(expectedPos.x + BLOCK_MARGIN), aposY, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
@@ -407,9 +405,8 @@ void Engine::CheckCollisions(Player& player, Vector3f movement)
 
             do
             {
-                float playerY = positive ? playerPos.y + i - CAMERA_OFFSET : blockPlayerY - (delta - i);
-                // TODO: corriger l'implémentation de l'algorithme de vérification de hitbox vers le haut
-                float blockY = positive ? (KRYO_HITBOX_COMPARE(floorf(playerY + BLOCK_HEIGHT - CAMERA_OFFSET), playerY + BLOCK_HEIGHT)) : int(playerY - BLOCK_HEIGHT);
+                float playerY = positive ? playerPos.y + i : blockPlayerY - (delta - i);
+                float blockY = positive ? int(playerY) + BLOCK_HEIGHT + BLOCK_HEIGHT : int(playerY - BLOCK_HEIGHT);
 
                 auto btL = Get_s(int(playerPos.x + BLOCK_MARGIN), blockY, int(playerPos.z));
                 auto btR = Get_s(int(playerPos.x - BLOCK_MARGIN), blockY, int(playerPos.z));
@@ -424,8 +421,9 @@ void Engine::CheckCollisions(Player& player, Vector3f movement)
                 if ((btL != BTYPE_AIR || btR != BTYPE_AIR || btF != BTYPE_AIR || btB != BTYPE_AIR
                     || btD1 != BTYPE_AIR || btD2 != BTYPE_AIR || btD3 != BTYPE_AIR || btD4 != BTYPE_AIR))
                 {
-                    playerPos.y = positive ? blockY - BLOCK_HEIGHT - (BLOCK_HEIGHT + CAMERA_OFFSET) : int(playerY);
-                    player.SetSpeedY(0);
+                    playerPos.y = int(playerY);
+                    if (!player.IsFreecam())
+                        player.SetSpeedY(0);
                     goto endCheckY;
                 }
             } while (i--);

@@ -71,7 +71,7 @@ Vector3f Player::SimulateMove(bool front, bool back, bool left, bool right, bool
     }
     else
     {
-        m_speed += m_gravity * elapsedTime;
+        m_speed.y += m_gravity * elapsedTime;
         dPosition.y = m_speed.y * elapsedTime;
     }
 
@@ -136,7 +136,7 @@ float Player::GetSpeedZ()
 void Player::SetFreecam(bool v)
 {
     m_freecam = v;
-    m_speed = 0;
+    m_speed.y = PLAYER_SPEED;
 }
 
 bool Player::IsFreecam() const

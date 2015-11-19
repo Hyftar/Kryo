@@ -15,7 +15,6 @@ enum BLOCK_TYPE { BTYPE_AIR, BTYPE_DIRT, BTYPE_GRASS };
 #define PLAYER_HEIGHT 1.7f
 #define PLAYER_SPEED 2.f
 
-#define CAMERA_OFFSET -0.3f
 #define BLOCK_HEIGHT 1.f
 #define BLOCK_MARGIN .25f
 
