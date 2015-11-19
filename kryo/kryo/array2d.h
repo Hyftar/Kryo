@@ -1,12 +1,12 @@
-#ifndef KRYO_ARRAY2D
-#define KRYO_ARRAY2D
+#ifndef KRYO_ARRAY2D_H
+#define KRYO_ARRAY2D_H
 
 #include "global.h"
 #include "define.h"
 
 KRYO_BEGIN_NAMESPACE
 
-#define KRYO_BLOCKARRAY2D_SIZE (m_width * m_height)
+#define KRYO_ARRAY2D_SIZE (m_width * m_height)
 #define KRYO_COORDINATES_IDX(x, y) (x + (y * m_height))
 
 template <class T>
@@ -21,13 +21,15 @@ public:
     T Get(int x, int y) const;
     T Get(int idx) const;
     int GetIndexAt(int x, int y) const;
-    int GetBlockCount() const;
+    int GetSize() const;
+    int GetWidth() const;
+    int GetHeight() const;
     void Reset(T value);
 
-private:
+protected:
     void ValidateCoordinates(int x, int y) const;
 
-private:
+protected:
     int m_width, m_height;
     T* m_data;
 };
@@ -37,7 +39,7 @@ Array2d<T>::Array2d(int width, int height)
     : m_width(width), m_height(height)
 {
     assert(width > 0 && height > 0);
-    m_data = new T[KRYO_BLOCKARRAY2D_SIZE];
+    m_data = new T[KRYO_ARRAY2D_SIZE];
     Reset(T());
 }
 
@@ -45,8 +47,8 @@ template <class T>
 Array2d<T>::Array2d(const Array2d& source)
     : m_width(source.m_width), m_height(source.m_height)
 {
-    m_data = new T[KRYO_BLOCKARRAY2D_SIZE];
-    std::copy(source.m_data, source.m_data + KRYO_BLOCKARRAY2D_SIZE, m_data);
+    m_data = new T[KRYO_ARRAY2D_SIZE];
+    std::copy(source.m_data, source.m_data + KRYO_ARRAY2D_SIZE, m_data);
 }
 
 template <class T>
@@ -65,7 +67,7 @@ void Array2d<T>::Set(int x, int y, T type)
 template <class T>
 void Array2d<T>::Set(int idx, T type)
 {
-    assert(idx >= 0 && idx < KRYO_BLOCKARRAY2D_SIZE);
+    assert(idx >= 0 && idx < KRYO_ARRAY2D_SIZE);
     m_data[idx] = type;
 }
 
@@ -79,7 +81,7 @@ T Array2d<T>::Get(int x, int y) const
 template <class T>
 T Array2d<T>::Get(int idx) const
 {
-    assert(idx >= 0 && idx < KRYO_BLOCKARRAY2D_SIZE);
+    assert(idx >= 0 && idx < KRYO_ARRAY2D_SIZE);
     return m_data[idx];
 }
 
@@ -91,15 +93,27 @@ int Array2d<T>::GetIndexAt(int x, int y) const
 }
 
 template <class T>
-int Array2d<T>::GetBlockCount() const
+int Array2d<T>::GetSize() const
 {
-    return KRYO_BLOCKARRAY2D_SIZE;
+    return KRYO_ARRAY2D_SIZE;
+}
+
+template <class T>
+int Array2d<T>::GetWidth() const
+{
+    return m_width;
+}
+
+template <class T>
+int Array2d<T>::GetHeight() const
+{
+    return m_height;
 }
 
 template <class T>
 void Array2d<T>::Reset(T value)
 {
-    std::fill(m_data, m_data + KRYO_BLOCKARRAY2D_SIZE, value);
+    std::fill(m_data, m_data + KRYO_ARRAY2D_SIZE, value);
 }
 
 template <class T>
@@ -109,7 +123,7 @@ void Array2d<T>::ValidateCoordinates(int x, int y) const
     assert(x < m_width && y < m_height);
 }
 
-#undef KRYO_BLOCKARRAY2D_SIZE
+#undef KRYO_ARRAY2D_SIZE
 #undef KRYO_COORDINATES_IDX
 
 KRYO_END_NAMESPACE
