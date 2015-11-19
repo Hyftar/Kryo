@@ -44,6 +44,11 @@ private:
     bool LoadTexture(Texture& texture, const std::string& filename, bool stopOnError = true);
     void DrawCube(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
     void DrawHexagon(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
+
+    BlockInfo::BlockUV* CreateBlockUV(
+        TextureAtlas::TextureIndex frontIndex, TextureAtlas::TextureIndex backIndex,
+        TextureAtlas::TextureIndex rightIndex, TextureAtlas::TextureIndex leftIndex,
+        TextureAtlas::TextureIndex topIndex, TextureAtlas::TextureIndex bottomIndex) const;
     void AddBlockDefinition(const BlockType bt, const std::string& name,
         const std::string& frontPath, const std::string& backPath,
         const std::string& rightPath, const std::string& leftPath,

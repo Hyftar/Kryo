@@ -69,6 +69,21 @@ void Engine::DeInit()
 {
 }
 
+BlockInfo::BlockUV* Engine::CreateBlockUV(
+    TextureAtlas::TextureIndex frontIndex, TextureAtlas::TextureIndex backIndex,
+    TextureAtlas::TextureIndex rightIndex, TextureAtlas::TextureIndex leftIndex,
+    TextureAtlas::TextureIndex topIndex, TextureAtlas::TextureIndex bottomIndex) const
+{
+    BlockInfo::BlockUV* m = new BlockInfo::BlockUV();
+    m_textureAtlas.TextureIndexToCoord(frontIndex, m->fu, m->fv, m->fw, m->fh);
+    m_textureAtlas.TextureIndexToCoord(backIndex, m->du, m->dv, m->dw, m->dh);
+    m_textureAtlas.TextureIndexToCoord(rightIndex, m->ru, m->rv, m->rw, m->rh);
+    m_textureAtlas.TextureIndexToCoord(leftIndex, m->lu, m->lv, m->lw, m->lh);
+    m_textureAtlas.TextureIndexToCoord(topIndex, m->tu, m->tv, m->tw, m->th);
+    m_textureAtlas.TextureIndexToCoord(bottomIndex, m->bu, m->bv, m->bw, m->bh);
+    return m;
+}
+
 void Engine::AddBlockDefinition(const BlockType bt, const std::string& name,
     const std::string& frontPath, const std::string& backPath,
     const std::string& rightPath, const std::string& leftPath,
@@ -82,13 +97,7 @@ void Engine::AddBlockDefinition(const BlockType bt, const std::string& name,
         topIndex = m_textureAtlas.AddTexture(topPath),
         bottomIndex = m_textureAtlas.AddTexture(bottomPath);
 
-    BlockInfo::BlockUV* m = new BlockInfo::BlockUV();
-    m_textureAtlas.TextureIndexToCoord(frontIndex, m->fu, m->fv, m->fw, m->fh);
-    m_textureAtlas.TextureIndexToCoord(backIndex, m->du, m->dv, m->dw, m->dh);
-    m_textureAtlas.TextureIndexToCoord(rightIndex, m->ru, m->rv, m->rw, m->rh);
-    m_textureAtlas.TextureIndexToCoord(leftIndex, m->lu, m->lv, m->lw, m->lh);
-    m_textureAtlas.TextureIndexToCoord(topIndex, m->tu, m->tv, m->tw, m->th);
-    m_textureAtlas.TextureIndexToCoord(bottomIndex, m->bu, m->bv, m->bw, m->bh);
+    BlockInfo::BlockUV* m = CreateBlockUV(frontIndex, backIndex, rightIndex, leftIndex, topIndex, bottomIndex);
 
     m_blockDefinitions.Set(bt, new BlockInfo(bt, name, *m));
 }

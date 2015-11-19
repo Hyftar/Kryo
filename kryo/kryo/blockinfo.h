@@ -19,6 +19,7 @@ public:
         float du, dv, dw, dh;
     };
 
+public:
     BlockInfo();
     BlockInfo(BlockType type, const std::string& name, BlockUV uvmap);
     ~BlockInfo();
@@ -26,7 +27,7 @@ public:
     int GetDurability() const;
     void SetDurability(int durability);
     void Afficher() const;
-    BlockUV GetUVMap() const;
+    const BlockUV* GetUVMap() const;
 
 private:
     BlockType m_type;

@@ -29,6 +29,9 @@ void BlockInfo::Afficher() const
     std::cout << "{ Type: \"" << m_type << "\", Name: \"" << m_name << "\", Durability: \"" << m_durability << "\" }" << std::endl;
 }
 
-BlockInfo::BlockUV BlockInfo::GetUVMap() const { return m_uvmap; }
+const BlockInfo::BlockUV* BlockInfo::GetUVMap() const
+{
+    return &m_uvmap;
+}
 
 KRYO_END_NAMESPACE
