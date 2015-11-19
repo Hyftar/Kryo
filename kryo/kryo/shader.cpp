@@ -10,22 +10,22 @@ bool Shader::Load(const std::string& vertFile, const std::string& fragFile, bool
     std::string fragmentShader;
     std::string vertexShader;
 
-    if(!Tool::LoadTextFile(vertFile, vertexShader))
+    if (!Tool::LoadTextFile(vertFile, vertexShader))
     {
         if(verbose)
             std::cout << "Failed to load " << vertFile << std::endl;
         return false;
     }
 
-    if(!Tool::LoadTextFile(fragFile, fragmentShader))
+    if (!Tool::LoadTextFile(fragFile, fragmentShader))
     {
         if(verbose)
             std::cout << "Failed to load " << fragFile << std::endl;
         return false;
     }
 
-    const char * my_fragment_shader_source = fragmentShader.c_str();
-    const char * my_vertex_shader_source = vertexShader.c_str();
+    const char* my_fragment_shader_source = fragmentShader.c_str();
+    const char* my_vertex_shader_source = vertexShader.c_str();
 
     //std::cout << fragmentShader << std::endl;
     //std::cout << vertexShader << std::endl;
@@ -118,7 +118,7 @@ bool Shader::CheckShaderError(GLenum shader, bool verbose)
         glGetShaderInfoLog(shader, maxLength, &maxLength, infoLog);
 
         std::cout << infoLog << std::endl;
-        delete [] infoLog;
+        delete[] infoLog;
         return false;
     }
 
@@ -143,7 +143,7 @@ bool Shader::CheckProgramError(GLenum program, bool showWarning, bool verbose)
         CHECK_GL_ERROR();
 
         std::cout << infoLog << std::endl;
-        delete [] infoLog;
+        delete[] infoLog;
     }
 
     return compileOk;

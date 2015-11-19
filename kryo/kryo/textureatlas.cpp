@@ -102,7 +102,7 @@ bool TextureAtlas::Generate(int textureSize, bool mipmap)
     int level = textureSize;
     int oglLevel = 0;
     int mipmapSize = textureSize * m_nbTexturePerSide;
-    while(mipmapSize != 0)
+    while (mipmapSize != 0)
     {
         ILuint atlasTex;
         ilGenImages(1, &atlasTex);
@@ -111,7 +111,7 @@ bool TextureAtlas::Generate(int textureSize, bool mipmap)
         ilClearColour(1, 0, 0, 1);
         ilClearImage();
 
-        for(TextureList::iterator it = m_textureList.begin(); it != m_textureList.end(); ++it)
+        for (TextureList::iterator it = m_textureList.begin(); it != m_textureList.end(); ++it)
         {
             ILuint tmpImg;
             ilGenImages(1, &tmpImg);
