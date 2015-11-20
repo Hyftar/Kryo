@@ -4,8 +4,8 @@ KRYO_BEGIN_NAMESPACE
 
 BlockInfo::BlockInfo() { }
 
-BlockInfo::BlockInfo(BlockType type, const std::string& name, BlockUV uvmap)
-    : m_type(type), m_name(name), m_uvmap(uvmap) { }
+BlockInfo::BlockInfo(BlockType type, const std::string& name, BlockUV uvmap, const bool solid)
+    : m_uvmap(uvmap), m_type(type), m_name(name), m_solid(solid) { }
 
 BlockInfo::~BlockInfo() { }
 
@@ -32,6 +32,11 @@ void BlockInfo::Afficher() const
 const BlockInfo::BlockUV* BlockInfo::GetUVMap() const
 {
     return &m_uvmap;
+}
+
+bool BlockInfo::IsSolid() const
+{
+    return m_solid;
 }
 
 KRYO_END_NAMESPACE

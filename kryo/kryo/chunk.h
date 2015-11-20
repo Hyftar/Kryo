@@ -22,7 +22,7 @@ public:
     ~Chunk();
     void Remove(int idx);
     void Remove(int x, int y, int z);
-    void Set(int idx, BlockType Type);
+    void Set(int idx, BlockType type);
     void Set(int x, int y, int z, BlockType type);
     void Reset(BlockType type = BTYPE_AIR);
     void Update(float absX, const float absY, const int chunkX, const int chunkY);
@@ -43,7 +43,8 @@ private:
     bool m_isDirty;
     ChunkMesh m_chunkMesh;
     Array3d<BlockType> m_blocks;
-    ChunkBuffer* m_chunks;
+    /*ChunkBuffer* m_chunks;*/
+    Array2d<Chunk*>* m_chunks;
 };
 
 KRYO_END_NAMESPACE

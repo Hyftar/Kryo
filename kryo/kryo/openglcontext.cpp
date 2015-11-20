@@ -61,7 +61,14 @@ bool OpenglContext::Start(const std::string& title, int width, int height, bool 
         Render(m_lastFrameTime);
         m_app.display();
 
-        m_lastFrameTime = clock.getElapsedTime().asSeconds();
+        m_lastFrameTime = clock.getElapsedTime().asSeconds(); // time taken by the current loop
+
+        // Due to a bug in SFML2.3, handle max fps ourself
+        float dt = (1.f / m_maxFps) - m_lastFrameTime;
+        if (dt > 0)
+            Sleep(dt * 1000.f);
+
+        m_lastFrameTime = clock.getElapsedTime().asSeconds(); // time taken by the current loop + sleep for max fps
     }
 
     UnloadResource();

@@ -16,6 +16,7 @@ public:
     void LoadChunks(Chunk*** chunks);
     void SwapBuffer(Chunk*** chunks);
     Chunk* Get(int x, int y) const;
+    BlockType GetBlock_s(int chunkX, int chunkY, int x, int y, int z) const;
 
 protected:
     int m_width, m_height;
