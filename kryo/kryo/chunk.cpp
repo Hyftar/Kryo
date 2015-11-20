@@ -22,27 +22,33 @@ Chunk::~Chunk() { }
 
 void Chunk::PopulateArrayTest()
 {
-    m_blocks.Reset(BTYPE_AIR);
-    for (int x = 0; x < CHUNK_SIZE_WIDTH; ++x)
+    // Plancher
+    for (size_t i = 0; i < 256; ++i)
+        m_blocks.Set(i, BTYPE_GRASS);
+
+    // Arche
+    for (size_t i = 0; i < 3; ++i)
     {
-        for (int z = 0; z < CHUNK_SIZE_DEPTH; ++z)
-        {
-            for (int y = 0; y < 1; ++y)
-            {
-                m_blocks.Set(x, y, z, BTYPE_GRASS);
-            }
-        }
+        m_blocks.Set(15, 1 + i, 1, BTYPE_DIRT);
+        m_blocks.Set(15, 1 + i, 3, BTYPE_DIRT);
     }
 
-    for (size_t i = 0; i < 5; ++i)
-    {
-        m_blocks.Set(8, 1 + rand() % 4, i + 1, BTYPE_GRASS);
-    }
+    m_blocks.Set(15, 3, 2, BTYPE_DIRT);
 
-    /*for (size_t i = 0; i < 5; ++i)
-    {
-        m_blocks.Set(14 - i, 20, 10, BTYPE_GRASS);
-    }*/
+    // Marches
+    for (size_t i = 0; i < 4; ++i)
+        m_blocks.Set(8, 1 + i, 6 + i, BTYPE_DIRT);
+
+    // Mur axe des X
+    for (size_t i = 0; i < 3; ++i)
+        for (size_t j = 0; j < 4; ++j)
+            m_blocks.Set(15, 1 + i, 5 + j, BTYPE_DIRT);
+
+    // Mur axe des Z
+    for (size_t i = 0; i < 3; ++i)
+        for (size_t j = 0; j < 4; ++j)
+            m_blocks.Set(10 + j, 1 + i, 15, BTYPE_DIRT);
+
     m_isDirty = true;
 }
 
