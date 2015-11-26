@@ -454,15 +454,23 @@ void Engine::CheckCollisions(Player& player, Vector3f movement)
     player.GetChunkPosition(chunkX, chunkY);
     Vector3f expectedPos = playerPos + movement;
 
-    auto aposY = roundf(playerPos.y);
+    auto aposY = playerPos.y;
+    auto bposY = playerPos.y + (PLAYER_HEIGHT / 2.f);
+    auto cposY = playerPos.y + PLAYER_HEIGHT;
     if (GetBlock_s(int(expectedPos.x - BLOCK_MARGIN), aposY, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
         GetBlock_s(int(expectedPos.x + BLOCK_MARGIN), aposY, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        GetBlock_s(int(expectedPos.x - BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        GetBlock_s(int(expectedPos.x + BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
         GetBlock_s(int(expectedPos.x + BLOCK_MARGIN), aposY, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
         GetBlock_s(int(expectedPos.x - BLOCK_MARGIN), aposY, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        GetBlock_s(int(expectedPos.x + BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        GetBlock_s(int(expectedPos.x - BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR)
+
+        GetBlock_s(int(expectedPos.x - BLOCK_MARGIN), bposY, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        GetBlock_s(int(expectedPos.x + BLOCK_MARGIN), bposY, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        GetBlock_s(int(expectedPos.x + BLOCK_MARGIN), bposY, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        GetBlock_s(int(expectedPos.x - BLOCK_MARGIN), bposY, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+
+        GetBlock_s(int(expectedPos.x - BLOCK_MARGIN), cposY, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        GetBlock_s(int(expectedPos.x + BLOCK_MARGIN), cposY, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        GetBlock_s(int(expectedPos.x + BLOCK_MARGIN), cposY, int(playerPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        GetBlock_s(int(expectedPos.x - BLOCK_MARGIN), cposY, int(playerPos.z + BLOCK_MARGIN)) != BTYPE_AIR)
     {
         movement.x = 0;
     }
@@ -470,12 +478,18 @@ void Engine::CheckCollisions(Player& player, Vector3f movement)
 
     if (GetBlock_s(int(playerPos.x - BLOCK_MARGIN), aposY, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
         GetBlock_s(int(playerPos.x + BLOCK_MARGIN), aposY, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        GetBlock_s(int(playerPos.x - BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        GetBlock_s(int(playerPos.x + BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
         GetBlock_s(int(playerPos.x + BLOCK_MARGIN), aposY, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
         GetBlock_s(int(playerPos.x - BLOCK_MARGIN), aposY, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
-        GetBlock_s(int(playerPos.x + BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
-        GetBlock_s(int(playerPos.x - BLOCK_MARGIN), aposY + BLOCK_HEIGHT, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR)
+
+        GetBlock_s(int(playerPos.x - BLOCK_MARGIN), bposY, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        GetBlock_s(int(playerPos.x + BLOCK_MARGIN), bposY, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        GetBlock_s(int(playerPos.x + BLOCK_MARGIN), bposY, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        GetBlock_s(int(playerPos.x - BLOCK_MARGIN), bposY, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+
+        GetBlock_s(int(playerPos.x - BLOCK_MARGIN), cposY, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        GetBlock_s(int(playerPos.x + BLOCK_MARGIN), cposY, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR ||
+        GetBlock_s(int(playerPos.x + BLOCK_MARGIN), cposY, int(expectedPos.z - BLOCK_MARGIN)) != BTYPE_AIR ||
+        GetBlock_s(int(playerPos.x - BLOCK_MARGIN), cposY, int(expectedPos.z + BLOCK_MARGIN)) != BTYPE_AIR)
     {
         movement.z = 0;
     }

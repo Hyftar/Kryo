@@ -145,7 +145,7 @@ float Player::GetSpeedZ()
 void Player::SetFreecam(bool v)
 {
     m_freecam = v;
-    m_speed.y = PLAYER_SPEED;
+    m_speed.y = v ? PLAYER_SPEED : 0.f;
 }
 
 bool Player::IsFreecam() const
