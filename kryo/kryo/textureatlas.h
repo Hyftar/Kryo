@@ -34,7 +34,7 @@ private:
         ILuint texId;
         TextureIndex texIdx;
 
-        TextureInfo(ILuint _texId, unsigned int _texIdx) : texId(_texId), texIdx(_texIdx) {}
+        TextureInfo(ILuint ntexId, unsigned int ntexIdx) : texId(ntexId), texIdx(ntexIdx) {}
     };
     // On utilise un std::map pour avoir des valeurs uniques
     typedef std::map<std::string, TextureInfo> TextureList;

@@ -19,8 +19,8 @@ public:
         float u, v;
 
         VertexData() { }
-        VertexData(float _x, float _y, float _z, float _r, float _g, float _b, float _u, float _v)
-            : x(_x), y(_y), z(_z), r(_r), g(_g), b(_b), u(_u), v(_v) {}
+        VertexData(float nx, float ny, float nz, float nr, float ng, float nb, float nu, float nv)
+            : x(nx), y(ny), z(nz), r(nr), g(ng), b(nb), u(nu), v(nv) {}
     };
 
 public:
