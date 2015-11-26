@@ -170,14 +170,7 @@ void Engine::UnloadResource()
 void Engine::Render(float elapsedTime)
 {
     static float gameTime = elapsedTime;
-    static int fps = 0;
-
-    if (int(gameTime + elapsedTime) >= gameTime)
-    {
-        m_fps = fps;
-        fps = 0;
-    }
-    fps++;
+    m_fps = 1.f / elapsedTime;
 
     gameTime += elapsedTime;
 
