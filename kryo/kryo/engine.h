@@ -12,6 +12,7 @@
 #include "textureatlas.h"
 #include "array2d.h"
 #include "chunkbuffer.h"
+#include "tool.h"
 
 KRYO_BEGIN_NAMESPACE
 
@@ -43,6 +44,7 @@ public:
 
     void LoadChunks();
 private:
+    void GetBlocAtCursor();
     int GetFps() const;
     void PrintText(unsigned int x, unsigned int y, const std::string & t) const;
     void DrawHud() const;
@@ -66,6 +68,9 @@ private:
 private:
     bool m_wireframe;
     bool m_moveForward, m_moveBackward, m_moveLeft, m_moveRight, m_moveUp, m_moveDown;
+
+    Vector3i m_currentBlock;
+    Vector3f m_currentFaceNormal;
 
     Player m_player;
     //ChunkBuffer m_chunks;
