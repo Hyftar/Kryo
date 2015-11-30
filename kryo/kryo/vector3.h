@@ -1,5 +1,5 @@
-#ifndef KRYO_VECTOR_H
-#define KRYO_VECTOR_H
+#ifndef KRYO_VECTOR3_H
+#define KRYO_VECTOR3_H
 
 #include "global.h"
 #include <cmath>
@@ -16,7 +16,6 @@ public:
     T Length() const;
     T Dot(const Vector3<T>& v) const;
 
-    void Truncate();
     void Normalize();
     void Zero();
 
