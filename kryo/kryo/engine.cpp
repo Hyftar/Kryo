@@ -6,9 +6,10 @@ Engine::Engine() : m_wireframe(false),
 m_moveForward(false), m_moveBackward(false),
 m_moveLeft(false), m_moveRight(false),
 m_moveUp(false), m_moveDown(false),
-m_player(CHUNK_VIEW_DISTANCE_X * CHUNK_SIZE_WIDTH / 2.f, 100.f, CHUNK_VIEW_DISTANCE_Y * CHUNK_SIZE_DEPTH / 2.f, 90, 0, Vector3f(PLAYER_SPEED, 0.f, PLAYER_SPEED)),
-/*m_chunks(CHUNK_VIEW_DISTANCE_X, CHUNK_VIEW_DISTANCE_Y, CHUNK_BUFFER_SIZE_WIDTH, CHUNK_BUFFER_SIZE_HEIGHT),*/
-m_chunks(CHUNK_VIEW_DISTANCE_X, CHUNK_VIEW_DISTANCE_Y),
+m_player(0.f, 120.f, 0.f, 90, 0, Vector3f(PLAYER_SPEED, 0.f, PLAYER_SPEED)),
+/*m_chunks(CHUNK_VIEW_DISTANCE, CHUNK_VIEW_DISTANCE, CHUNK_BUFFER_SIZE_WIDTH, CHUNK_BUFFER_SIZE_HEIGHT),*/
+m_perlin(6, 8, 50, WORLD_SEED),
+m_chunks(this, m_perlin, m_player),
 m_blockDefinitions(BLOCK_TYPE_MAX, BLOCK_TYPE_MAX),
 m_textureAtlas(TEXTUREATLAS_SIZE),
 m_fps(0) { }
@@ -17,18 +18,18 @@ Engine::~Engine() { }
 
 void Engine::LoadChunks()
 {
-    for (int x = 0; x < CHUNK_VIEW_DISTANCE_X; x++)
+    for (int x = 0; x < CHUNK_VIEW_DISTANCE * 2; x++)
     {
-        for (int y = 0; y < CHUNK_VIEW_DISTANCE_Y; y++)
+        for (int y = 0; y < CHUNK_VIEW_DISTANCE * 2; y++)
         {
-            m_chunks.Set(x, y, new Chunk(this, x, y));
+            m_chunks.Set(x, y, new Chunk(this, m_perlin, x, y));
         }
     }
 }
 
 void Engine::Init()
 {
-    LoadChunks();
+    m_chunks.MoveLoadedChunks(m_player.GetChunkPosition());
     GLenum err = glewInit();
     if (err != GLEW_OK)
     {
@@ -184,9 +185,9 @@ void Engine::Render(float elapsedTime)
     glGetIntegerv(GL_FOG_MODE, &fogMode);
     glUniform1i(glGetUniformLocationARB(m_shader01.m_program, "fogMode"), fogMode);
 
-    for (int x = 0; x < CHUNK_VIEW_DISTANCE_X; x++)
+    for (int x = 0; x < CHUNK_VIEW_DISTANCE; x++)
     {
-        for (int y = 0; y < CHUNK_VIEW_DISTANCE_Y; y++)
+        for (int y = 0; y < CHUNK_VIEW_DISTANCE; y++)
         {
             Chunk* chunk = m_chunks.Get(x, y);
 
@@ -194,7 +195,7 @@ void Engine::Render(float elapsedTime)
 
             if (chunk->IsDirty())
                 chunk->Update(CHUNK_SIZE_WIDTH * x, CHUNK_SIZE_DEPTH * y, x, y);
-                //chunk->Update((CHUNK_SIZE_WIDTH * x) - (CHUNK_SIZE_WIDTH * CHUNK_VIEW_DISTANCE_X / 2), (CHUNK_SIZE_DEPTH * y) - (CHUNK_SIZE_DEPTH * CHUNK_VIEW_DISTANCE_Y / 2), x, y);
+
             chunk->Render();
         }
     }
@@ -245,7 +246,7 @@ void Engine::KeyPressEvent(unsigned char key)
         break;
     case 57: // Space
         if (!m_player.IsFreecam() && m_player.GetSpeedY() == 0)
-            m_player.SetSpeedY(5.f);
+            m_player.SetSpeedY(PLAYER_JUMPHEIGHT);
         break;
     default:
         std::cout << "Unhandled key: " << (int)key << std::endl;
@@ -364,7 +365,7 @@ Chunk* Engine::GetChunk_s(int chunkX, int chunkY, int nx, int ny, int nz) const
     chunkX += floor(nx / float(CHUNK_SIZE_WIDTH));
     chunkY += floor(nz / float(CHUNK_SIZE_DEPTH));
 
-    if (chunkX < 0 || chunkY < 0 || chunkX >= CHUNK_VIEW_DISTANCE_X || chunkY >= CHUNK_VIEW_DISTANCE_Y)
+    if (chunkX < 0 || chunkY < 0 || chunkX >= CHUNK_VIEW_DISTANCE || chunkY >= CHUNK_VIEW_DISTANCE)
         return nullptr;
 
     Chunk* chunk = m_chunks.Get(chunkX, chunkY);
@@ -687,6 +688,7 @@ endCheckY:
     player.SetPosition(playerPos);
 
     #undef KRYO_HITBOX_COMPARE
+    m_chunks.CheckPlayerPosition(m_player);
 }
 
 bool Engine::LoadTexture(Texture& texture, const std::string& filename, bool stopOnError)

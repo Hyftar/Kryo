@@ -3,18 +3,21 @@
 
 #include "global.h"
 #include "define.h"
-#include "player.h"
-#include "chunk.h"
+#include "vector3.h"
+#include "array2d.h"
 #include "texture.h"
 #include "shader.h"
-#include "openglcontext.h"
-#include "blockinfo.h"
 #include "textureatlas.h"
-#include "array2d.h"
-#include "chunkbuffer.h"
+#include "blockinfo.h"
+#include "openglcontext.h"
+#include "world.h"
+#include "player.h"
 #include "tool.h"
 
 KRYO_BEGIN_NAMESPACE
+
+class World;
+class Player;
 
 class Engine : public OpenglContext
 {
@@ -44,10 +47,6 @@ public:
 
     Array2d<BlockInfo*>* GetBlockDefinitions() { return &m_blockDefinitions; }
     const Array2d<BlockInfo*>* GetBlockDefinitions() const { return &m_blockDefinitions; }
-    /*ChunkBuffer* GetChunkArray() { return &m_chunks; }
-    const ChunkBuffer* GetChunkArray() const { return &m_chunks; }*/
-    Array2d<Chunk*>* GetChunkArray() { return &m_chunks; }
-    const Array2d<Chunk*>* GetChunkArray() const { return &m_chunks; }
 
     void LoadChunks();
 private:
@@ -78,9 +77,10 @@ private:
     Vector3i m_currentBlock;
     Vector3f m_currentFaceNormal;
 
+    Perlin m_perlin;
+
     Player m_player;
-    //ChunkBuffer m_chunks;
-    Array2d<Chunk*> m_chunks;
+    World m_chunks;
     Array2d<BlockInfo*> m_blockDefinitions;
 
     Texture m_textureFont, m_textureCrosshair;

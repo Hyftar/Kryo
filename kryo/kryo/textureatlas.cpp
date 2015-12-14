@@ -75,16 +75,6 @@ bool TextureAtlas::Generate(int textureSize, bool mipmap)
         }
     }
 
-
-    //std::cout << ilGetInteger(IL_IMAGE_BPP) << std::endl;
-    //std::cout << ilGetInteger(IL_IMAGE_FORMAT) << std::endl;
-    //std::cout << ilGetInteger(IL_IMAGE_DEPTH) << std::endl;
-    //std::cout << ilGetInteger(IL_IMAGE_TYPE) << std::endl;
-    //std::cout << ilGetInteger(IL_IMAGE_WIDTH) << std::endl;
-    //std::cout << ilGetInteger(IL_IMAGE_HEIGHT) << std::endl;
-
-
-
     glGenTextures(1, &m_textureId);
     glBindTexture(GL_TEXTURE_2D, m_textureId);
     if(mipmap)
@@ -119,7 +109,6 @@ bool TextureAtlas::Generate(int textureSize, bool mipmap)
             ilCopyImage(it->second.texId);
 
             iluImageParameter(ILU_FILTER, ILU_NEAREST);
-            //iluImageParameter(ILU_FILTER, ILU_BILINEAR);
             if(level != textureSize)
                 iluScale(level, level, 1);
 
@@ -132,7 +121,6 @@ bool TextureAtlas::Generate(int textureSize, bool mipmap)
             int y = m_nbTexturePerSide - 1 - imgIdx / m_nbTexturePerSide;
             ilBindImage(atlasTex);
             ilSetPixels(x * level, y * level, 0, level, level, 1, IL_RGBA, IL_UNSIGNED_BYTE, data);
-            //ilOverlayImage(tmpImg, x * level, y * level, 0);
 
             delete [] data;
             ilDeleteImages(1, &tmpImg);
@@ -145,15 +133,8 @@ bool TextureAtlas::Generate(int textureSize, bool mipmap)
         //ilSaveImage("textureatlas.png");
         //}
 
-        //std::cout << oglLevel << ":" << level << ":" << mipmapSize << std::endl;
         glTexImage2D(GL_TEXTURE_2D, oglLevel++, GL_RGBA, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGBA, GL_UNSIGNED_BYTE, ilGetData());
 
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
         CHECK_GL_ERROR();
 
 

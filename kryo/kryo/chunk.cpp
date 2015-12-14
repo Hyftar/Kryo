@@ -6,18 +6,11 @@
 
 KRYO_BEGIN_NAMESPACE
 
-Chunk::Chunk(Engine* engine, int x, int z)
-    : m_engine(engine), m_isDirty(false), m_posX(x), m_posZ(z), m_blocks(CHUNK_SIZE_WIDTH, CHUNK_SIZE_HEIGHT, CHUNK_SIZE_DEPTH)
-{
-    m_chunks = m_engine->GetChunkArray();
-    PopulateChunk(95);
-}
+Chunk::Chunk(Engine* engine, Perlin& perlin, int x, int z)
+    : m_engine(engine), m_isModified(false), m_isDirty(false), m_blocks(CHUNK_SIZE_WIDTH, CHUNK_SIZE_HEIGHT, CHUNK_SIZE_DEPTH), m_posX(x), m_posZ(z), m_perlin(perlin) { }
 
 Chunk::Chunk(Chunk &source)
-    : m_engine(source.m_engine), m_isDirty(false), m_posX(source.m_posX), m_posZ(source.m_posZ), m_blocks(Array3d<BlockType>(source.m_blocks))
-{
-    m_chunks = m_engine->GetChunkArray();
-}
+    : m_engine(source.m_engine), m_isDirty(false), m_blocks(Array3d<BlockType>(source.m_blocks)), m_perlin(source.m_perlin) { }
 
 Chunk::~Chunk() { }
 
@@ -53,14 +46,13 @@ void Chunk::PopulateArrayTest()
     m_isDirty = true;
 }
 
-void Chunk::PopulateChunk(int seed)
+void Chunk::PopulateChunk(Perlin& rng)
 {
-    Perlin perlin(6, 8, 50, seed);
     for (size_t x = 0; x < CHUNK_SIZE_WIDTH; ++x)
     {
         for (size_t z = 0; z < CHUNK_SIZE_DEPTH; ++z)
         {
-            float val = perlin.Get((float)(m_posX * CHUNK_SIZE_WIDTH + x) / 2000.f, (float)(m_posZ * CHUNK_SIZE_DEPTH + z) / 2000.f);
+            float val = rng.Get((float)(m_posX * CHUNK_SIZE_WIDTH + x) / 2000.f, (float)(m_posZ * CHUNK_SIZE_DEPTH + z) / 2000.f);
             int maxHeight = (int)val + (CHUNK_SIZE_HEIGHT / 2);
             for (size_t y = 0; y < maxHeight; ++y)
             {
@@ -89,7 +81,7 @@ void Chunk::Remove(int nx, int ny, int nz)
 
 void Chunk::Set(int idx, BlockType type)
 {
-    m_isDirty = true;
+    m_isDirty = m_isModified = true;
     m_blocks.Set(idx, type);
 }
 
@@ -109,9 +101,19 @@ bool Chunk::IsDirty() const
     return m_isDirty;
 }
 
+bool Chunk::IsModified() const
+{
+    return m_isModified;
+}
+
 void Chunk::Invalidate()
 {
     m_isDirty = true;
+}
+
+std::string Chunk::Serialize(int idx) const
+{
+    return std::string("" + m_blocks.Get(idx));
 }
 
 BlockType Chunk::Get(int idx) const

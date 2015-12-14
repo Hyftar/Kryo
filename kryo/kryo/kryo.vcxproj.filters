@@ -75,6 +75,9 @@
     <ClInclude Include="perlin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="world.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -110,10 +113,10 @@
     <ClCompile Include="textureatlas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="chunkbuffer.cpp">
+    <ClCompile Include="perlin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="perlin.cpp">
+    <ClCompile Include="world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

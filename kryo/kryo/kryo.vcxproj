@@ -104,11 +104,11 @@
     <ClInclude Include="tool.h" />
     <ClInclude Include="vector2.h" />
     <ClInclude Include="vector3.h" />
+    <ClInclude Include="world.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="blockinfo.cpp" />
     <ClCompile Include="chunk.cpp" />
-    <ClCompile Include="chunkbuffer.cpp" />
     <ClCompile Include="chunkmesh.cpp" />
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="main.cpp" />
@@ -119,6 +119,7 @@
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="textureatlas.cpp" />
     <ClCompile Include="tool.cpp" />
+    <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="media\shaders\shader01.frag" />

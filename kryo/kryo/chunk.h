@@ -5,19 +5,19 @@
 #include "define.h"
 #include "chunkmesh.h"
 #include "array3d.h"
-#include "blockinfo.h"
 #include "array2d.h"
-#include "chunkbuffer.h"
+#include "perlin.h"
 
 KRYO_BEGIN_NAMESPACE
 
-class ChunkBuffer;
+class World;
 class Engine;
+class BlockInfo;
 
 class Chunk
 {
 public:
-    Chunk(Engine* engine, int x, int z);
+    Chunk(Engine* engine, Perlin& perlin, int x, int z);
     Chunk(Chunk& source);
     ~Chunk();
     void Remove(int idx);
@@ -32,21 +32,25 @@ public:
     BlockType Get_s(int x, int y, int z) const;
     bool IsDirty() const;
     void Invalidate();
+    bool IsModified() const;
+    void PopulateChunk(Perlin& rng);
+    std::string Serialize(int idx) const;
 
 private:
     void AddBlockToMesh(ChunkMesh::VertexData* vd, int& count, BlockInfo* bi,
         float absX, float absY, int chunkX,
         int chunkY, int x, int y, int z);
     void PopulateArrayTest();
-    void PopulateChunk(int seed);
 
 private:
+    Perlin& m_perlin;
     Engine* m_engine;
+    Chunk* m_chunks;
     bool m_isDirty;
+    bool m_isModified;
     int m_posX, m_posZ;
     ChunkMesh m_chunkMesh;
     Array3d<BlockType> m_blocks;
-    Array2d<Chunk*>* m_chunks;
 };
 
 KRYO_END_NAMESPACE
