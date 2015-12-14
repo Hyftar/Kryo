@@ -31,6 +31,7 @@ public:
     BlockType Get(int x, int y, int z) const;
     BlockType Get_s(int x, int y, int z) const;
     bool IsDirty() const;
+    void Invalidate();
 
 private:
     void AddBlockToMesh(ChunkMesh::VertexData* vd, int& count, BlockInfo* bi,

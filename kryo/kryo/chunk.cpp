@@ -7,14 +7,14 @@
 KRYO_BEGIN_NAMESPACE
 
 Chunk::Chunk(Engine* engine, int x, int z)
-    : m_engine(engine), m_isDirty(false), m_blocks(CHUNK_SIZE_WIDTH, CHUNK_SIZE_HEIGHT, CHUNK_SIZE_DEPTH), m_posX(x), m_posZ(z)
+    : m_engine(engine), m_isDirty(false), m_posX(x), m_posZ(z), m_blocks(CHUNK_SIZE_WIDTH, CHUNK_SIZE_HEIGHT, CHUNK_SIZE_DEPTH)
 {
     m_chunks = m_engine->GetChunkArray();
     PopulateChunk(95);
 }
 
 Chunk::Chunk(Chunk &source)
-    : m_engine(source.m_engine), m_isDirty(false), m_blocks(Array3d<BlockType>(source.m_blocks))
+    : m_engine(source.m_engine), m_isDirty(false), m_posX(source.m_posX), m_posZ(source.m_posZ), m_blocks(Array3d<BlockType>(source.m_blocks))
 {
     m_chunks = m_engine->GetChunkArray();
 }
@@ -74,18 +74,17 @@ void Chunk::PopulateChunk(int seed)
         }
     }
 
-    m_isModified = false;
     m_isDirty = true;
 }
 
 void Chunk::Remove(int idx)
 {
-    m_blocks.Set(idx, BTYPE_AIR);
+    Set(idx, BTYPE_AIR);
 }
 
-void Chunk::Remove(int x, int y, int z)
+void Chunk::Remove(int nx, int ny, int nz)
 {
-    m_blocks.Set(x, y, z, BTYPE_AIR);
+    Set(nx, ny, nz, BTYPE_AIR);
 }
 
 void Chunk::Set(int idx, BlockType type)
@@ -94,9 +93,10 @@ void Chunk::Set(int idx, BlockType type)
     m_blocks.Set(idx, type);
 }
 
-void Chunk::Set(int x, int y, int z, BlockType type)
+void Chunk::Set(int nx, int ny, int nz, BlockType type)
 {
-    m_blocks.Set(x, y, z, type);
+    m_isDirty = true;
+    m_blocks.Set(nx, ny, nz, type);
 }
 
 void Chunk::Render() const
@@ -107,6 +107,11 @@ void Chunk::Render() const
 bool Chunk::IsDirty() const
 {
     return m_isDirty;
+}
+
+void Chunk::Invalidate()
+{
+    m_isDirty = true;
 }
 
 BlockType Chunk::Get(int idx) const

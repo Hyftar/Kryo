@@ -302,27 +302,108 @@ void Engine::MouseMoveEvent(int x, int y)
 
 void Engine::MousePressEvent(const MOUSE_BUTTON& button, int x, int y)
 {
+    GetBlockAtCursor();
+    if (m_currentBlock.x == -1)
+        return;
+
+    Vector2i chunkPos = Vector2i(m_currentBlock.x / CHUNK_SIZE_WIDTH, m_currentBlock.z / CHUNK_SIZE_DEPTH);
+    BlockType bt;
+
+    if (button == MOUSE_BUTTON_LEFT)
+        bt = BTYPE_AIR;
+    else if (button == MOUSE_BUTTON_RIGHT && m_currentFaceNormal != 0.f)
+    {
+        m_currentBlock.x += (int)m_currentFaceNormal.x;
+        m_currentBlock.y += (int)m_currentFaceNormal.y;
+        m_currentBlock.z += (int)m_currentFaceNormal.z;
+        bt = BTYPE_STONE;
+
+        Vector3f playerPos = m_player.GetPosition();
+        if (m_currentBlock.y == (int)playerPos.y)
+            return;
+    }
+    else return;
+
+    m_currentBlock.x %= CHUNK_SIZE_WIDTH;
+    m_currentBlock.z %= CHUNK_SIZE_DEPTH;
+
+    SetBlock_s(chunkPos.x, chunkPos.y, m_currentBlock.x, m_currentBlock.y, m_currentBlock.z, bt);
+
+    if (button == MOUSE_BUTTON_LEFT || button == MOUSE_BUTTON_RIGHT)
+    {
+        Chunk* chunkX = nullptr;
+        Chunk* chunkY = nullptr;
+
+        if (m_currentBlock.x == 0)
+            chunkX = m_chunks.Get(chunkPos.x - 1, chunkPos.y);
+        else if (m_currentBlock.x == CHUNK_SIZE_WIDTH - 1)
+            chunkX = m_chunks.Get(chunkPos.x + 1, chunkPos.y);
+
+        if (m_currentBlock.z == 0)
+            chunkY = m_chunks.Get(chunkPos.x, chunkPos.y - 1);
+        else if (m_currentBlock.z == CHUNK_SIZE_DEPTH - 1)
+            chunkY = m_chunks.Get(chunkPos.x, chunkPos.y + 1);
+
+        if (chunkX != nullptr)
+            chunkX->Invalidate();
+
+        if (chunkY != nullptr)
+            chunkY->Invalidate();
+    }
 }
 
 void Engine::MouseReleaseEvent(const MOUSE_BUTTON& button, int x, int y)
 {
 }
 
-BlockType Engine::GetBlock_s(int chunkX, int chunkY, int nx, int ny, int nz) const
+Chunk* Engine::GetChunk_s(int chunkX, int chunkY, int nx, int ny, int nz) const
 {
     if (ny < 0 || ny >= CHUNK_SIZE_HEIGHT)
-        return BTYPE_AIR;
+        return nullptr;
 
     chunkX += floor(nx / float(CHUNK_SIZE_WIDTH));
-    int x = (nx < 0 ? CHUNK_SIZE_WIDTH + nx : nx) % CHUNK_SIZE_WIDTH;
-
     chunkY += floor(nz / float(CHUNK_SIZE_DEPTH));
-    int z = (nz < 0 ? CHUNK_SIZE_DEPTH + nz : nz) % CHUNK_SIZE_DEPTH;
 
     if (chunkX < 0 || chunkY < 0 || chunkX >= CHUNK_VIEW_DISTANCE_X || chunkY >= CHUNK_VIEW_DISTANCE_Y)
-        return BTYPE_AIR;
+        return nullptr;
 
     Chunk* chunk = m_chunks.Get(chunkX, chunkY);
+
+    return chunk;
+}
+
+void Engine::SetBlock_s(int chunkX, int chunkY, int nx, int ny, int nz, BlockType bt) const
+{
+    int x = (nx < 0 ? CHUNK_SIZE_WIDTH + nx : nx) % CHUNK_SIZE_WIDTH;
+    int z = (nz < 0 ? CHUNK_SIZE_DEPTH + nz : nz) % CHUNK_SIZE_DEPTH;
+    Chunk* chunk = GetChunk_s(chunkX, chunkY, nx, ny, nz);
+
+    if (chunk == nullptr)
+        return;
+
+    chunk->Set(x, ny, z, bt);
+}
+
+void Engine::SetBlock_s(int nx, int ny, int nz, BlockType type) const
+{
+    SetBlock_s(0, 0, 0, 0, 0, type);
+}
+
+void Engine::SetBlock_s(int chunkX, int chunkY, Vector3i v, BlockType type) const
+{
+    SetBlock_s(chunkX, chunkY, v.x, v.y, v.z, type);
+}
+
+void Engine::SetBlock_s(Vector3i v, BlockType type) const
+{
+    SetBlock_s(0, 0, v.x, v.y, v.z, type);
+}
+
+BlockType Engine::GetBlock_s(int chunkX, int chunkY, int nx, int ny, int nz) const
+{
+    int x = (nx < 0 ? CHUNK_SIZE_WIDTH + nx : nx) % CHUNK_SIZE_WIDTH;
+    int z = (nz < 0 ? CHUNK_SIZE_DEPTH + nz : nz) % CHUNK_SIZE_DEPTH;
+    Chunk* chunk = GetChunk_s(chunkX, chunkY, nx, ny, nz);
 
     if (chunk == nullptr)
         return BTYPE_AIR;
@@ -344,11 +425,6 @@ BlockType Engine::GetBlock_s(Vector3i v) const
 {
     return GetBlock_s(v.x, v.y, v.z);
 }
-
-/*BlockType Engine::GetBlock_s(int chunkX, int chunkY, int x, int y, int z) const
-{
-    return m_chunks.GetBlock_s(chunkX, chunkY, x, y, z);
-}*/
 
 void Engine::GetBlockAtCursor()
 {

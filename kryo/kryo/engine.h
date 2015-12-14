@@ -32,8 +32,15 @@ public:
     virtual void MousePressEvent(const MOUSE_BUTTON &button, int x, int y);
     virtual void MouseReleaseEvent(const MOUSE_BUTTON &button, int x, int y);
 
-    BlockType GetBlock_s(int chunkX, int chunkY, int x, int y, int z) const;
-    BlockType GetBlock_s(int x, int y, int z) const;
+    Chunk* GetChunk_s(int chunkX, int chunkY, int nx, int ny, int nz) const;
+    void SetBlock_s(int chunkX, int chunkY, int nx, int ny, int nz, BlockType bt) const;
+    void SetBlock_s(int nx, int ny, int nz, BlockType type) const;
+    void SetBlock_s(int chunkX, int chunkY, Vector3i v, BlockType type) const;
+    void SetBlock_s(Vector3i v, BlockType type) const;
+    BlockType GetBlock_s(int chunkX, int chunkY, int nx, int ny, int nz) const;
+    BlockType GetBlock_s(int xn, int ny, int nz) const;
+    BlockType GetBlock_s(int chunkX, int chunkY, Vector3i v) const;
+    BlockType GetBlock_s(Vector3i v) const;
 
     Array2d<BlockInfo*>* GetBlockDefinitions() { return &m_blockDefinitions; }
     const Array2d<BlockInfo*>* GetBlockDefinitions() const { return &m_blockDefinitions; }
