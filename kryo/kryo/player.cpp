@@ -85,11 +85,9 @@ Vector3f Player::GetPosition() const
     return m_position;
 }
 
-// TODO: retourner un Vector2i?
-void Player::GetChunkPosition(int& x, int& y) const
+Vector2<int> Player::GetChunkPosition() const
 {
-    x = m_position.x / CHUNK_SIZE_WIDTH;
-    y = m_position.z / CHUNK_SIZE_DEPTH;
+    return Vector2<int>(m_position.x / CHUNK_SIZE_WIDTH, m_position.z / CHUNK_SIZE_DEPTH);
 }
 
 void Player::SetPosition(Vector3f pos)

@@ -4,7 +4,7 @@
 #include "global.h"
 
 typedef uint8_t BlockType;
-enum BLOCK_TYPE { BTYPE_AIR, BTYPE_DIRT, BTYPE_GRASS };
+enum BLOCK_TYPE { BTYPE_AIR, BTYPE_DIRT, BTYPE_GRASS, BTYPE_STONE, BTYPE_NONE };
 
 #define CHUNK_SIZE_WIDTH 16
 #define CHUNK_SIZE_HEIGHT 128

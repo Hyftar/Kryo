@@ -2,14 +2,15 @@
 #include "chunk.h"
 #include "define.h"
 #include "engine.h"
+#include "perlin.h"
 
 KRYO_BEGIN_NAMESPACE
 
-Chunk::Chunk(Engine* engine)
-    : m_engine(engine), m_isDirty(false), m_blocks(CHUNK_SIZE_WIDTH, CHUNK_SIZE_HEIGHT, CHUNK_SIZE_DEPTH)
+Chunk::Chunk(Engine* engine, int x, int z)
+    : m_engine(engine), m_isDirty(false), m_blocks(CHUNK_SIZE_WIDTH, CHUNK_SIZE_HEIGHT, CHUNK_SIZE_DEPTH), m_posX(x), m_posZ(z)
 {
     m_chunks = m_engine->GetChunkArray();
-    PopulateArrayTest();
+    PopulateChunk(95);
 }
 
 Chunk::Chunk(Chunk &source)
@@ -49,6 +50,31 @@ void Chunk::PopulateArrayTest()
         for (size_t j = 0; j < 4; ++j)
             m_blocks.Set(10 + j, 1 + i, 15, BTYPE_DIRT);
 
+    m_isDirty = true;
+}
+
+void Chunk::PopulateChunk(int seed)
+{
+    Perlin perlin(6, 8, 50, seed);
+    for (size_t x = 0; x < CHUNK_SIZE_WIDTH; ++x)
+    {
+        for (size_t z = 0; z < CHUNK_SIZE_DEPTH; ++z)
+        {
+            float val = perlin.Get((float)(m_posX * CHUNK_SIZE_WIDTH + x) / 2000.f, (float)(m_posZ * CHUNK_SIZE_DEPTH + z) / 2000.f);
+            int maxHeight = (int)val + (CHUNK_SIZE_HEIGHT / 2);
+            for (size_t y = 0; y < maxHeight; ++y)
+            {
+                if (y < maxHeight - 4)
+                    m_blocks.Set(x, y, z, BTYPE_STONE);
+                else if (y < maxHeight - 1)
+                    m_blocks.Set(x, y, z, BTYPE_DIRT);
+                else
+                    m_blocks.Set(x, y, z, BTYPE_GRASS);
+            }
+        }
+    }
+
+    m_isModified = false;
     m_isDirty = true;
 }
 

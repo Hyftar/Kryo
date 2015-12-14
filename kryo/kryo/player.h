@@ -2,6 +2,7 @@
 #define KRYO_PLAYER_H
 
 #include "global.h"
+#include "vector2.h"
 #include "vector3.h"
 #include "chunk.h"
 
@@ -19,7 +20,7 @@ public:
     void ApplyTranslation();
     Vector3f SimulateMove(bool front, bool back, bool left, bool right, bool up, bool down, float elapsedTime);
     Vector3f GetPosition() const;
-    void GetChunkPosition(int& x, int& y) const;
+    Vector2<int> GetChunkPosition() const;
     void SetPosition(Vector3f pos);
     void SetGravity(float v);
     void SetSpeed(Vector3f v);
@@ -37,7 +38,6 @@ private:
     bool m_freecam;
     Vector3f m_speed;
     Vector3f m_position;
-    Vector3f m_chunkPosition;
     float m_rotX, m_rotY;
     float m_gravity;
 };

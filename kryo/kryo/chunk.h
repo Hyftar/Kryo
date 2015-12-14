@@ -17,7 +17,7 @@ class Engine;
 class Chunk
 {
 public:
-    Chunk(Engine* engine);
+    Chunk(Engine* engine, int x, int z);
     Chunk(Chunk& source);
     ~Chunk();
     void Remove(int idx);
@@ -37,13 +37,14 @@ private:
         float absX, float absY, int chunkX,
         int chunkY, int x, int y, int z);
     void PopulateArrayTest();
+    void PopulateChunk(int seed);
 
 private:
     Engine* m_engine;
     bool m_isDirty;
+    int m_posX, m_posZ;
     ChunkMesh m_chunkMesh;
     Array3d<BlockType> m_blocks;
-    /*ChunkBuffer* m_chunks;*/
     Array2d<Chunk*>* m_chunks;
 };
 

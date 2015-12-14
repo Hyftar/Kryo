@@ -17,21 +17,11 @@ Engine::~Engine() { }
 
 void Engine::LoadChunks()
 {
-    /*Chunk*** chunks = new Chunk**[CHUNK_BUFFER_SIZE_WIDTH];
-    for (int x = 0; x < CHUNK_BUFFER_SIZE_WIDTH; x++)
-    {
-        chunks[x] = new Chunk*[CHUNK_BUFFER_SIZE_HEIGHT];
-        for (int y = 0; y < CHUNK_BUFFER_SIZE_HEIGHT; y++)
-        {
-            chunks[x][y] = new Chunk(this);
-        }
-    }
-    m_chunks.LoadChunks(chunks);*/
     for (int x = 0; x < CHUNK_VIEW_DISTANCE_X; x++)
     {
         for (int y = 0; y < CHUNK_VIEW_DISTANCE_Y; y++)
         {
-            m_chunks.Set(x, y, new Chunk(this));
+            m_chunks.Set(x, y, new Chunk(this, x, y));
         }
     }
 }
@@ -148,6 +138,7 @@ void Engine::LoadResource()
         TEXTURE_PATH "grass_side.png",
         TEXTURE_PATH "grass.png",
         TEXTURE_PATH "dirt.png");
+    AddBlockDefinition(BTYPE_STONE, "Stone", TEXTURE_PATH "stone.png");
 
     if (!m_textureAtlas.Generate(128, false))
     {
@@ -187,21 +178,6 @@ void Engine::Render(float elapsedTime)
 
     m_textureAtlas.Bind();
 
-    // Plancher
-    // Les vertex doivent etre affiches dans le sens anti-horaire (CCW)
-    /*float nbRep = 50.f;
-    glBegin(GL_QUADS);
-        glNormal3f(0, 1, 0); // Normal vector
-        glTexCoord2f(0, 0);
-        glVertex3f(-100.f, -2.f, 100.f);
-        glTexCoord2f(nbRep, 0);
-        glVertex3f(100.f, -2.f, 100.f);
-        glTexCoord2f(nbRep, nbRep);
-        glVertex3f(100.f, -2.f, -100.f);
-        glTexCoord2f(0, nbRep);
-        glVertex3f(-100.f, -2.f, -100.f);
-    glEnd();*/
-
     m_shader01.Use();
 
     GLint fogMode;
@@ -230,8 +206,6 @@ void Engine::Render(float elapsedTime)
     DrawHud();
     if (m_wireframe)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-    //DrawHexagon(0, -1, -7);
 }
 
 void Engine::KeyPressEvent(unsigned char key)
@@ -361,12 +335,22 @@ BlockType Engine::GetBlock_s(int x, int y, int z) const
     return GetBlock_s(0, 0, x, y, z);
 }
 
+BlockType Engine::GetBlock_s(int chunkX, int chunkY, Vector3i v) const
+{
+    return GetBlock_s(chunkX, chunkY, v.x, v.y, v.z);
+}
+
+BlockType Engine::GetBlock_s(Vector3i v) const
+{
+    return GetBlock_s(v.x, v.y, v.z);
+}
+
 /*BlockType Engine::GetBlock_s(int chunkX, int chunkY, int x, int y, int z) const
 {
     return m_chunks.GetBlock_s(chunkX, chunkY, x, y, z);
 }*/
 
-void Engine::GetBlocAtCursor()
+void Engine::GetBlockAtCursor()
 {
     int x = Width() / 2;
     int y = Height() / 2;
@@ -387,9 +371,9 @@ void Engine::GetBlocAtCursor()
 
     gluUnProject(winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
 
-    posX += .5f;
-    posY += .5f;
-    posZ += .5f;
+    //posX += .5f;
+    //posY += .5f;
+    //posZ += .5f;
 
     // Le cast vers int marche juste pour les valeurs entiere, utiliser une fonction de la libc si besoin
     // de valeurs negatives
@@ -436,11 +420,11 @@ void Engine::GetBlocAtCursor()
 
     if (!found)
     {
-        m_currentBlock.x = -1;
+        m_currentBlock = -1;
     }
     else
     {
-        // Find on which face of the bloc we got an hit
+        // Find on which face of the block we got a hit
         m_currentFaceNormal.Zero();
 
         // Front et back:
@@ -508,9 +492,8 @@ void Engine::DrawHud() const
             PrintText(10, Height() - 25, ss.str());
             ss.str("");
             // TODO: remplacer par un Vector2i
-            int chunkX, chunkY;
-            m_player.GetChunkPosition(chunkX, chunkY);
-            ss << "Chunk: " << "[" << chunkX << ", " << chunkY << "]";
+            Vector2<int> chunkPos = m_player.GetChunkPosition();
+            ss << "Chunk: " << "[" << chunkPos.x << ", " << chunkPos.y << "]";
             PrintText(10, 25, ss.str());
             ss.str("");
             ss << "Position: " << m_player.GetPosition();
@@ -543,8 +526,7 @@ void Engine::DrawHud() const
 void Engine::CheckCollisions(Player& player, Vector3f movement)
 {
     Vector3f playerPos = player.GetPosition();
-    int chunkX, chunkY;
-    player.GetChunkPosition(chunkX, chunkY);
+    Vector2<int> chunkPos = player.GetChunkPosition();
     Vector3f expectedPos = playerPos + movement;
 
     auto aposY = playerPos.y;

@@ -44,14 +44,13 @@ public:
 
     void LoadChunks();
 private:
-    void GetBlocAtCursor();
     int GetFps() const;
     void PrintText(unsigned int x, unsigned int y, const std::string & t) const;
     void DrawHud() const;
+    void GetBlockAtCursor();
     void CheckCollisions(Player& player, Vector3f movement);
     void DrawCube(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
     void DrawHexagon(int x, int y, int z, float rotX = 0, float rotY = 0, float rotZ = 0);
-
     BlockInfo::BlockUV* CreateBlockUV(
         TextureAtlas::TextureIndex frontIndex, TextureAtlas::TextureIndex backIndex,
         TextureAtlas::TextureIndex rightIndex, TextureAtlas::TextureIndex leftIndex,
