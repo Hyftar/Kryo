@@ -14,6 +14,7 @@ class Array3d
 {
 public:
     Array3d(int width, int height, int depth);
+    Array3d(int width, int height, int depth, T defaultVal);
     Array3d(const Array3d &source);
     ~Array3d();
     void Set(int x, int y, int z, T type);
@@ -42,6 +43,14 @@ Array3d<T>::Array3d(int width, int height, int depth)
     assert(width > 0 && height > 0 && depth > 0);
     m_data = new T[KRYO_ARRAY3D_SIZE];
     Reset(T());
+}
+
+template<class T>
+Array3d<T>::Array3d(int width, int height, int depth, T defaultVal) : m_width(width), m_height(height), m_depth(depth)
+{
+    assert(width > 0 && height > 0 && depth > 0);
+    m_data = new T[KRYO_ARRAY3D_SIZE];
+    Reset(defaultVal);
 }
 
 template <class T>
